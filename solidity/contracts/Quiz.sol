@@ -16,7 +16,11 @@ contract Quiz {
 
 	function payout(bytes32 winner) {
 		require(msg.sender == deployer, "Only the deployer can trigger the payout");
-		address(uint160(deployer)).transfer((0.05 * address(this)).balance);
-		address(uint160(winner)).transfer((address(this)).balance);
+
+		uint currentBalance = (address(this)).balance;
+		uint fees = 0.05 * currentBalance;
+
+		address(uint160(deployer)).transfer(fees);
+		address(uint160(winner)).transfer(currentBalance - fees);
 	}
 }
