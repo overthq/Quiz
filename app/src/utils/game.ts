@@ -1,11 +1,11 @@
 interface CreateGamePayload {
-	address: string;
+	creator: string;
 	difficulty?: 'easy' | 'medium' | 'hard';
 	category?: number;
 }
 
 export const createGame = async ({
-	address,
+	creator,
 	difficulty,
 	category
 }: CreateGamePayload) => {
@@ -16,7 +16,7 @@ export const createGame = async ({
 				Accept: 'application/json',
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ address, difficulty, category })
+			body: JSON.stringify({ creator, difficulty, category })
 		});
 		const data = await response.json();
 		return data;
@@ -36,6 +36,10 @@ export const createGame = async ({
 //
 // One other thing to figure out is how to know when the game ends.
 // This will require a clever combination of REST endpoints and websockets.
+// Or do we just brute-force it?
+// That is, check if there are still people who have not completed the game, when someone does complete the game?
+// That will actually not work, since there is the chance that people might get disconnected during the game.
+// Maybe we have to introduce a disconnection policy, which has to be in the Ts & Cs.
 
 interface StartGamePayload {
 	address: string;
@@ -67,6 +71,7 @@ interface JoinGamePayload {
 export const joinGame = async ({ gameId, address }: JoinGamePayload) => {
 	try {
 		const response = await fetch('', {
+			method: 'POST',
 			headers: {
 				Accept: 'application/json',
 				'Content-Type': 'application/json'
