@@ -7,14 +7,17 @@ interface CacheQuestionsOptions {
 	gameId: string;
 	category?: number;
 	difficulty?: 'easy' | 'medium' | 'hard';
+	rounds?: number;
 }
 
 export const cacheQuestions = async ({
 	gameId,
 	category,
-	difficulty
+	difficulty,
+	rounds
 }: CacheQuestionsOptions) => {
-	let apiUrl = `https://opentdb.com/api.php?amount=10&type=multiple`;
+	let apiUrl = `https://opentdb.com/api.php?type=multiple`;
+	apiUrl += `&amount=${rounds || 10}`;
 	if (category) apiUrl += `&category=${category}`;
 	if (difficulty) apiUrl += `&difficulty=${difficulty}`;
 

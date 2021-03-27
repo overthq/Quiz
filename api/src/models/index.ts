@@ -1,2 +1,2 @@
 export { Game } from "./Game";
-export { Score } from "./Score";
+export { Player } from "./Player";

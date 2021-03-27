@@ -8,12 +8,14 @@
     "@types/node": "^14.14.35",
     "@types/node-fetch": "^2.5.8",
     "@types/redis": "^2.8.28",
+    "@types/ws": "^7.4.0",
     "nodemon": "^2.0.7",
     "typescript": "^4.2.3"
   },
   "dependencies": {
     "mongoose": "^5.12.1",
     "node-fetch": "^2.6.1",
-    "redis": "^3.0.2"
+    "redis": "^3.0.2",
+    "ws": "^7.4.4"
   }
 }
