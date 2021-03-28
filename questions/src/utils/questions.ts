@@ -63,15 +63,3 @@ export const getQuestion = async ({ gameId, round }: GetQuestionOptions) => {
 		console.log(error);
 	}
 };
-
-interface GetAnswerOptions {
-	gameId: string;
-	round: number;
-	option: string;
-}
-
-export const getAnswer = async ({
-	gameId,
-	round,
-	option
-}: GetAnswerOptions) => {};
