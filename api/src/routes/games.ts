@@ -1,10 +1,6 @@
 import { Router } from 'express';
 import { Game, Player } from '../models';
-import client from '../config/redis';
-import { promisify } from 'util';
 import { cacheQuestions, getQuestion } from '../utils/questions';
-
-const getAsync = promisify(client.get).bind(client);
 
 const router = Router();
 
@@ -27,7 +23,6 @@ router.post('/new', async (req, res) => {
 		success: true,
 		data: { game }
 	});
-	// On the frontend
 });
 
 // On the frontend, call the pay function on the contract, and on success, call this endpoint

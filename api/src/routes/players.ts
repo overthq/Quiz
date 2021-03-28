@@ -4,8 +4,7 @@ import { getQuestion } from '../utils/questions';
 
 const router = Router();
 
-// Should the gameId be passed as a param here, or just be fetched from the player's info?
-// Performance vs Standard
+// Perf vs standard: Should gameId be a param, or fetched from the player?
 router.put('/:gameId/:playerId/:round/update-score', async (req, res) => {
 	const { gameId, playerId, round } = req.params;
 	const { answer, timeLeft } = req.body;

@@ -11,7 +11,7 @@ export const createGame = async ({
 }: CreateGamePayload) => {
 	try {
 		const response = await fetch('/games/new', {
-			method: 'PUT',
+			method: 'POST',
 			headers: {
 				Accept: 'application/json',
 				'Content-Type': 'application/json'
@@ -24,6 +24,13 @@ export const createGame = async ({
 		console.log(error);
 	}
 };
+
+// Takeaways:
+// 1. I should have a file, where I store the API specifications
+
+// Should we generate a JWT?
+// I would prefer if I didn't have to authenticate at all,
+// but this isn't a public-facing API.
 
 // Make a call to the server, that sets a status on the game and broadcasts said status to all listeners
 // This should be a good pattern:
@@ -68,6 +75,7 @@ interface JoinGamePayload {
 	address: string;
 }
 
+// Precondition: User must have transferred the split amount
 export const joinGame = async ({ gameId, address }: JoinGamePayload) => {
 	try {
 		const response = await fetch('', {
@@ -85,4 +93,41 @@ export const joinGame = async ({ gameId, address }: JoinGamePayload) => {
 	}
 };
 
-export const updateScore = () => {};
+interface FetchQuestionPayload {
+	gameId: string;
+	round: number;
+}
+
+export const fetchQuestion = async ({
+	gameId,
+	round
+}: FetchQuestionPayload) => {
+	const response = await fetch(`/${gameId}/question/${round}`, {
+		method: 'GET',
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json'
+		}
+	});
+	const data = await response.json();
+	return data;
+};
+
+interface SendAnswerPayload {
+	round: number;
+	option: string;
+}
+
+export const sendAnswer = async ({ round, option }: SendAnswerPayload) => {
+	// Use the playerId
+	const response = await fetch('/players/${round}/}', {
+		method: 'POST',
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({ round, option })
+	});
+	const data = await response.json();
+	return data;
+};

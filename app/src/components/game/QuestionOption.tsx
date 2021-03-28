@@ -1,35 +1,25 @@
-import React from "react";
-import { Text, Pressable, StyleSheet } from "react-native";
+import React from 'react';
+import { Text, Pressable, StyleSheet } from 'react-native';
 
 interface QuestionOptionProps {
-  text: string;
-  isCorrect: boolean;
-  onSelect(): void;
+	text: string;
+	onSelect(option: string): void;
 }
 
-const QuestionOption: React.FC<QuestionOptionProps> = ({
-  text,
-  isCorrect,
-  onSelect,
-}) => {
-  const handlePress = () => {
-    onSelect();
-    if (isCorrect) {
-    }
-    // Change the presentation style of the thing, wait a second and then animate away from said screen
-  };
+const QuestionOption: React.FC<QuestionOptionProps> = ({ text, onSelect }) => {
+	const handlePress = () => onSelect(text);
 
-  return (
-    <Pressable onPress={handlePress} style={styles.container}>
-      <Text>{text}</Text>
-    </Pressable>
-  );
+	return (
+		<Pressable onPress={handlePress} style={styles.container}>
+			<Text>{text}</Text>
+		</Pressable>
+	);
 };
 
 const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-  },
+	container: {
+		width: '100%'
+	}
 });
 
 export default QuestionOption;

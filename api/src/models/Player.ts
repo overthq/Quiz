@@ -2,13 +2,19 @@ import { model, Document, Schema } from 'mongoose';
 
 interface PlayerType extends Document {
 	address: string;
+	nickname: string;
 	gameId: string;
+	round: number;
 	score: number;
 }
 
 const PlayerSchema = new Schema(
 	{
 		address: {
+			type: String,
+			required: true
+		},
+		nickname: {
 			type: String,
 			required: true
 		},
