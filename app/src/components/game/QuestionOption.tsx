@@ -18,7 +18,11 @@ const QuestionOption: React.FC<QuestionOptionProps> = ({ text, onSelect }) => {
 
 const styles = StyleSheet.create({
 	container: {
-		width: '100%'
+		width: '100%',
+		height: 40,
+		borderRadius: 20,
+		borderWidth: 1,
+		borderColor: '#777777'
 	}
 });
 
