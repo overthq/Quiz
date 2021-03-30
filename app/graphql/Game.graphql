@@ -1,0 +1,5 @@
+mutation CreateGame($gameObject: games_insert_input!) {
+	insert_games_one(object: $gameObject) {
+		id
+	}
+}

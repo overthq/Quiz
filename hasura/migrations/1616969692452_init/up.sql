@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS players (
 	id uuid primary key default gen_random_uuid(),
 	game_id uuid not null,
 	address varchar(42) not null,
+	nickname varchar(255) not null,
 	score int default 0,
 	created_at timestamptz default now(),
 	updated_at timestamptz default now(),

@@ -1,0 +1,5 @@
+mutation CreatePlayer($playerObject: players_insert_input!) {
+	insert_players_one(object: $playerObject) {
+		id
+	}
+}
