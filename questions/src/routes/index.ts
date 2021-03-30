@@ -1,30 +1,49 @@
 import { Router } from 'express';
 import { gql, GraphQLClient } from 'graphql-request';
+import { ethers } from 'hardhat';
 import {
 	cacheQuestions,
 	checkAnswerCorrect,
 	getQuestion
 } from '../utils/questions';
+import SETUP_GAME from '../queries/SETUP_GAME';
+import CREATE_GAME from '../queries/CREATE_GAME';
 
 const router = Router();
 
-const client = new GraphQLClient(process.env.HASURA_URL, {
+const client = new GraphQLClient(process.env.HASURA_URL as string, {
 	headers: {
-		'X-Hasura-Admin-Secret': process.env.HASURA_ADMIN_SECRET
+		'X-Hasura-Admin-Secret': process.env.HASURA_ADMIN_SECRET as string
 	}
 });
 
-router.post('/cache/:gameId', async (req, res) => {
-	const { gameId } = req.params;
-	const { category, difficulty, rounds } = req.body;
+router.post('/setup', async (req, res) => {
+	const { nickname, address, stake, category, difficulty, rounds } = req.body;
 
 	try {
-		await cacheQuestions({
+		const data = await client.request(CREATE_GAME, { creator: address });
+		const gameId = data.insert_games_one.id;
+
+		const Quiz = await ethers.getContractFactory('Quiz');
+
+		const [, quiz] = await Promise.all([
+			cacheQuestions({
+				gameId,
+				category,
+				difficulty,
+				rounds: Number(rounds)
+			}),
+			Quiz.deploy(Number(stake))
+		]);
+
+		await quiz.deployed();
+		await client.request(SETUP_GAME, {
 			gameId,
-			category,
-			difficulty,
-			rounds: Number(rounds)
+			contract: quiz.address,
+			nickname,
+			address
 		});
+
 		res.status(201).json({
 			success: true,
 			data: { message: 'Questions successfully cached' }

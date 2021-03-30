@@ -3,3 +3,11 @@ mutation CreateGame($gameObject: games_insert_input!) {
 		id
 	}
 }
+
+query Game($gameId: uuid!) {
+	games_by_pk(id: $gameId) {
+		id
+		creator
+		contract
+	}
+}

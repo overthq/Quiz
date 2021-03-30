@@ -1,24 +1,36 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { useWalletConnect } from '@walletconnect/react-native-dapp';
 import { AppStackParamList } from '../types/navigation';
 import Button from '../components/Button';
+import {
+	useCreatePlayerMutation,
+	useGamePlayersSubscription
+} from '../types/api';
 
 const Lobby = () => {
-	// Use websockets to get a live list of all the participants currently in the game.
-	const { accounts } = useWalletConnect(); // How to use this?
 	const {
 		params: { gameId, role }
 	} = useRoute<RouteProp<AppStackParamList, 'Lobby'>>();
+
+	const [,] = useGamePlayersSubscription({ variables: { gameId } });
+	const [, createPlayer] = useCreatePlayerMutation();
+
 	const { navigate } = useNavigation();
 
 	const startGame = () => {
 		navigate('Game');
 	};
 
-	const joinGame = () => {
-		// Do random things
+	const joinGame = async () => {
+		// Opens a modal with a form.
+		await createPlayer({
+			playerObject: {
+				game_id: gameId,
+				address: '',
+				nickname: ''
+			}
+		});
 	};
 
 	return (

@@ -904,6 +904,19 @@ export type CreatePlayerMutation = (
   )> }
 );
 
+export type GamePlayersSubscriptionVariables = Exact<{
+  gameId: Scalars['uuid'];
+}>;
+
+
+export type GamePlayersSubscription = (
+  { __typename?: 'subscription_root' }
+  & { players: Array<(
+    { __typename?: 'players' }
+    & Pick<Players, 'id' | 'nickname' | 'address'>
+  )> }
+);
+
 
 export const CreateGameDocument = gql`
     mutation CreateGame($gameObject: games_insert_input!) {
@@ -926,4 +939,17 @@ export const CreatePlayerDocument = gql`
 
 export function useCreatePlayerMutation() {
   return Urql.useMutation<CreatePlayerMutation, CreatePlayerMutationVariables>(CreatePlayerDocument);
+};
+export const GamePlayersDocument = gql`
+    subscription GamePlayers($gameId: uuid!) {
+  players(where: {game_id: {_eq: $gameId}}) {
+    id
+    nickname
+    address
+  }
+}
+    `;
+
+export function useGamePlayersSubscription<TData = GamePlayersSubscription>(options: Omit<Urql.UseSubscriptionArgs<GamePlayersSubscriptionVariables>, 'query'> = {}, handler?: Urql.SubscriptionHandler<GamePlayersSubscription, TData>) {
+  return Urql.useSubscription<GamePlayersSubscription, TData, GamePlayersSubscriptionVariables>({ query: GamePlayersDocument, ...options }, handler);
 };

@@ -3,3 +3,11 @@ mutation CreatePlayer($playerObject: players_insert_input!) {
 		id
 	}
 }
+
+subscription GamePlayers($gameId: uuid!) {
+	players(where: { game_id: { _eq: $gameId } }) {
+		id
+		nickname
+		address
+	}
+}

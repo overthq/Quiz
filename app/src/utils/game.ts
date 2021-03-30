@@ -102,7 +102,7 @@ export const fetchQuestion = async ({
 	gameId,
 	round
 }: FetchQuestionPayload) => {
-	const response = await fetch(`/${gameId}/question/${round}`, {
+	const response = await fetch(`question/${gameId}/${round}`, {
 		method: 'GET',
 		headers: {
 			Accept: 'application/json',
@@ -114,19 +114,25 @@ export const fetchQuestion = async ({
 };
 
 interface SendAnswerPayload {
+	gameId: string;
+	playerId: string;
 	round: number;
 	option: string;
 }
 
-export const sendAnswer = async ({ round, option }: SendAnswerPayload) => {
-	// Use the playerId
-	const response = await fetch('/players/${round}/}', {
+export const sendAnswer = async ({
+	gameId,
+	playerId,
+	round,
+	option
+}: SendAnswerPayload) => {
+	const response = await fetch(`/answer/${gameId}/${round}/}`, {
 		method: 'POST',
 		headers: {
 			Accept: 'application/json',
 			'Content-Type': 'application/json'
 		},
-		body: JSON.stringify({ round, option })
+		body: JSON.stringify({ playerId, option })
 	});
 	const data = await response.json();
 	return data;
