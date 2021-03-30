@@ -1,25 +1,32 @@
-import { task } from 'hardhat/config';
 import '@nomiclabs/hardhat-waffle';
-
-task('accounts', 'Prints the list of accounts', async (_, hre) => {
-	const accounts = await hre.ethers.getSigners();
-
-	for (const account of accounts) {
-		console.log(account.address);
-	}
-});
 
 export default {
 	solidity: '0.7.3',
 	defaultNetwork: process.env.NODE_ENV === 'production' ? 'mainnet' : 'ropsten',
 	networks: {
+		localhost: {
+			url: ''
+		},
 		hardhat: {},
-		rinkeby: {},
+		rinkeby: {
+			url: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+			accounts: [`0x${process.env.RINKEBY_PRIVATE_KEY}`]
+		},
 		ropsten: {
 			url: `https://eth-ropsten.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
 			accounts: [`0x${process.env.ROPSTEN_PRIVATE_KEY}`]
 		},
-		binance: {},
-		mainnet: {}
+		binanceTestnet: {
+			url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
+			accounts: { mnemonic: process.env.BINANCE_TESTNET_MNEMONIC } 
+		},
+		binanceMainnet: {
+			url: 'https://bsc-dataseed.binance.org/',
+			accounts: { mnemonic: process.env.BINANCE_MAINNET_MNEMONIC } 
+		},
+		mainnet: {
+			url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+			accounts: [`0x${process.env.MAINNET_PRIVATE_KEY}`]
+		}
 	}
 };

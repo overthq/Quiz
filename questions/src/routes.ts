@@ -1,13 +1,14 @@
 import { Router } from 'express';
 import { gql, GraphQLClient } from 'graphql-request';
+import '@nomiclabs/hardhat-waffle';
 import { ethers } from 'hardhat';
 import {
 	cacheQuestions,
 	checkAnswerCorrect,
 	getQuestion
-} from '../utils/questions';
-import SETUP_GAME from '../queries/SETUP_GAME';
-import CREATE_GAME from '../queries/CREATE_GAME';
+} from './utils/questions';
+import SETUP_GAME from './queries/SETUP_GAME';
+import CREATE_GAME from './queries/CREATE_GAME';
 
 const router = Router();
 
