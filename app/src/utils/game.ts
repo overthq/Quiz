@@ -1,22 +1,21 @@
-interface CreateGamePayload {
-	creator: string;
+interface SetupGamePayload {
+	nickname: string;
+	address: string;
+	stake: number;
 	difficulty?: 'easy' | 'medium' | 'hard';
 	category?: number;
+	rounds?: number;
 }
 
-export const createGame = async ({
-	creator,
-	difficulty,
-	category
-}: CreateGamePayload) => {
+export const setupGame = async (options: SetupGamePayload) => {
 	try {
-		const response = await fetch('/games/new', {
+		const response = await fetch('/setup', {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ creator, difficulty, category })
+			body: JSON.stringify(options)
 		});
 		const data = await response.json();
 		return data;
@@ -24,29 +23,6 @@ export const createGame = async ({
 		console.log(error);
 	}
 };
-
-// Takeaways:
-// 1. I should have a file, where I store the API specifications
-
-// Should we generate a JWT?
-// I would prefer if I didn't have to authenticate at all,
-// but this isn't a public-facing API.
-
-// Make a call to the server, that sets a status on the game and broadcasts said status to all listeners
-// This should be a good pattern:
-// * Persist only necessary things, and then broadcast live data.
-// * If a client loses connection, their state can be rehydrated from the persisted data.
-//
-// Since all the information on the games is cleared when the game ends, we can:
-// - Rehydrate state, just by checking if there's any record of the user's address in the database.
-// - Consequently not worry as much about disconnections.
-//
-// One other thing to figure out is how to know when the game ends.
-// This will require a clever combination of REST endpoints and websockets.
-// Or do we just brute-force it?
-// That is, check if there are still people who have not completed the game, when someone does complete the game?
-// That will actually not work, since there is the chance that people might get disconnected during the game.
-// Maybe we have to introduce a disconnection policy, which has to be in the Ts & Cs.
 
 interface StartGamePayload {
 	address: string;

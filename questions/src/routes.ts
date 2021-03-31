@@ -22,8 +22,10 @@ router.post('/setup', async (req, res) => {
 	const { nickname, address, stake, category, difficulty, rounds } = req.body;
 
 	try {
-		const data = await client.request(CREATE_GAME, { creator: address });
-		const gameId = data.insert_games_one.id;
+		const { insert_games_one } = await client.request(CREATE_GAME, {
+			creator: address
+		});
+		const gameId = insert_games_one.id;
 
 		const Quiz = await ethers.getContractFactory('Quiz');
 
@@ -38,17 +40,14 @@ router.post('/setup', async (req, res) => {
 		]);
 
 		await quiz.deployed();
-		await client.request(SETUP_GAME, {
+		const data = await client.request(SETUP_GAME, {
 			gameId,
 			contract: quiz.address,
 			nickname,
 			address
 		});
 
-		res.status(201).json({
-			success: true,
-			data: { message: 'Questions successfully cached' }
-		});
+		res.status(201).json({ success: true, data });
 	} catch (error) {
 		res.status(500).json({
 			success: false,
