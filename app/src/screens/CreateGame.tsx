@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
 import { useWalletConnect } from '@walletconnect/react-native-dapp';
@@ -23,26 +23,28 @@ interface Values {
 
 const slides = [
 	{
-		title: 'Nickname',
+		title: 'Choose a nickname',
 		content: <Nickname />
 	},
 	{
-		title: 'Stake',
+		title: 'Set stake',
 		content: <Stake />
 	},
 	{
-		title: 'Category',
+		title: 'Choose category',
 		content: <Category />
 	},
 	{
-		title: 'Difficulty',
+		title: 'Set difficulty',
 		content: <Difficulty />
 	},
 	{
-		title: 'Rounds',
+		title: 'Number of rounds',
 		content: <Rounds />
 	}
 ];
+
+const { width } = Dimensions.get('window');
 
 const CreateGame = () => {
 	const [slideIndex, setSlideIndex] = React.useState(0);
@@ -85,6 +87,10 @@ const CreateGame = () => {
 		});
 	};
 
+	const handleViewableItemsChanged = React.useCallback(({ viewableItems }) => {
+		viewableItems[0] && setSlideIndex(viewableItems[0].index);
+	}, []);
+
 	return (
 		<View style={styles.container}>
 			<Text>Create game</Text>
@@ -104,9 +110,23 @@ const CreateGame = () => {
 				{({ handleSubmit }) => (
 					<>
 						<FlatList
+							horizontal
 							keyExtractor={s => s.title}
 							data={slides}
-							renderItem={({ item }) => item.content}
+							renderItem={({ item }) => (
+								<View>
+									<Text>{item.title}</Text>
+									{item.content}
+								</View>
+							)}
+							viewabilityConfig={{ itemVisiblePercentThreshold: 90 }}
+							onViewableItemsChanged={handleViewableItemsChanged}
+							showsHorizontalScrollIndicator={false}
+							pagingEnabled
+							snapToInterval={width}
+							snapToAlignment='center'
+							decelerationRate='fast'
+							scrollEventThrottle={16}
 						/>
 						<Button onPress={handleSubmit}>Create game</Button>
 					</>
@@ -118,7 +138,10 @@ const CreateGame = () => {
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
+		flex: 1
+	},
+	slide: {
+		width,
 		paddingHorizontal: 16
 	}
 });
