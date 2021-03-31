@@ -3,10 +3,11 @@ import { View, TextInput } from 'react-native';
 import { useFormikContext } from 'formik';
 
 const Stake = () => {
-	const { values, setFieldValue } = useFormikContext();
+	const { values, handleChange } = useFormikContext<{ stake: string }>();
+
 	return (
 		<View>
-			<TextInput value={values.stake} onChangeText={setFieldValue('stake')} />
+			<TextInput value={values.stake} onChangeText={handleChange('stake')} />
 		</View>
 	);
 };

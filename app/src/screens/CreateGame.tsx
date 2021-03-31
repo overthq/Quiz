@@ -3,16 +3,55 @@ import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
 import { useWalletConnect } from '@walletconnect/react-native-dapp';
+import ethers from 'ethers';
 import Button from '../components/Button';
 import { setupGame } from '../utils/game';
 
+import Nickname from '../components/create-game/Nickname';
+import Stake from '../components/create-game/Stake';
+import Category from '../components/create-game/Category';
+import Difficulty from '../components/create-game/Difficulty';
+import Rounds from '../components/create-game/Rounds';
+
+interface Values {
+	nickname: string;
+	stake: number;
+	category?: number;
+	difficulty: 'easy' | 'medium' | 'hard';
+	rounds: number;
+}
+
+const slides = [
+	{
+		title: 'Nickname',
+		content: <Nickname />
+	},
+	{
+		title: 'Stake',
+		content: <Stake />
+	},
+	{
+		title: 'Category',
+		content: <Category />
+	},
+	{
+		title: 'Difficulty',
+		content: <Difficulty />
+	},
+	{
+		title: 'Rounds',
+		content: <Rounds />
+	}
+];
+
 const CreateGame = () => {
+	const [slideIndex, setSlideIndex] = React.useState(0);
 	const [loading, setLoading] = React.useState(false);
 
 	const { navigate } = useNavigation();
 	const { accounts, sendTransaction } = useWalletConnect();
 
-	const handleSubmit = async (values: any) => {
+	const handleSubmit = async (values: Values) => {
 		setLoading(true);
 		const { nickname, stake, category, difficulty, rounds } = values;
 
@@ -26,16 +65,17 @@ const CreateGame = () => {
 		});
 
 		// - Pay split to contract using WalletConnect
-		// Convert split amount to ETH using ethers.toWei
 
-		sendTransaction({
+		await sendTransaction({
 			from: accounts[0],
 			to: data.insert_games_one.contract,
 			gas: 0,
 			gasPrice: 0,
-			value: '',
+			value: ethers.utils.parseEther(stake.toString()).toString(),
 			nonce: ''
 		});
+
+		// Listen for the result from the wallet, and update the UI accordingly
 
 		setLoading(false);
 
@@ -54,10 +94,10 @@ const CreateGame = () => {
 			<Formik
 				initialValues={{
 					nickname: '',
-					stake: '',
-					rounds: '',
-					category: '',
-					difficulty: ''
+					stake: 0,
+					rounds: 10,
+					category: undefined,
+					difficulty: 'easy'
 				}}
 				onSubmit={handleSubmit}
 			>
@@ -65,8 +105,8 @@ const CreateGame = () => {
 					<>
 						<FlatList
 							keyExtractor={s => s.title}
-							data={[]}
-							renderItem={({ item }) => <View />}
+							data={slides}
+							renderItem={({ item }) => item.content}
 						/>
 						<Button onPress={handleSubmit}>Create game</Button>
 					</>
