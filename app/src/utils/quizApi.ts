@@ -7,8 +7,8 @@ export const fetchCategories = async () => {
 				'Content-Type': 'application/json'
 			}
 		});
-		const data = await response.json();
-		return data;
+		const { trivia_categories } = await response.json();
+		return trivia_categories;
 	} catch (error) {
 		console.log(error);
 	}
