@@ -27,13 +27,14 @@ export const answerQuestion = (option: string): AppThunk => async (
 	getState
 ) => {
 	const {
-		game: { round }
+		game: { gameId, playerId, round }
 	} = getState();
 
-	const { data } = await sendAnswer({ round, option });
-
-	dispatch({
-		type: UPDATE_SCORE,
-		payload: { score: data.score }
-	});
+	if (gameId && playerId) {
+		const { data } = await sendAnswer({ gameId, playerId, round, option });
+		dispatch({
+			type: UPDATE_SCORE,
+			payload: { score: data.score }
+		});
+	}
 };

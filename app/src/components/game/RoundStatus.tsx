@@ -1,12 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { GameResult } from '../../redux/game/types';
 
-const RoundStatus = () => {
-	const isCorrect = true;
-	const correctAnswer = 'thing';
+interface RoundStatusProps {
+	result: GameResult;
+}
 
-	// Have some kind of mount animation.
-	// Also, in the future, allow all animations to be turned off in settings.
+const RoundStatus: React.FC<RoundStatusProps> = ({ result }) => {
+	const { isCorrect, correctAnswer } = result;
 
 	return (
 		<View

@@ -102,13 +102,13 @@ export const sendAnswer = async ({
 	round,
 	option
 }: SendAnswerPayload) => {
-	const response = await fetch(`/answer/${gameId}/${round}/}`, {
+	const response = await fetch(`/answer/${gameId}/${round}`, {
 		method: 'POST',
 		headers: {
 			Accept: 'application/json',
 			'Content-Type': 'application/json'
 		},
-		body: JSON.stringify({ playerId, option })
+		body: JSON.stringify({ gameId, playerId, round, option })
 	});
 	const data = await response.json();
 	return data;

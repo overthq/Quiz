@@ -1,17 +1,34 @@
+export const INITIALIZE_GAME = 'game/INITIALIZE_GAME';
 export const UPDATE_QUESTION = 'game/UPDATE_QUESTION';
 export const UPDATE_SCORE = 'game/UPDATE_SCORE';
+export const SET_RESULT = 'game/SET_RESULT';
 
 export interface Question {
 	question: string;
 	options: string[];
 }
 
+export interface GameResult {
+	isCorrect: boolean;
+	correctAnswer: string;
+}
+
 export interface GameState {
 	loading: boolean;
 	gameId: string | null;
+	playerId: string | null;
 	round: number;
-	currentQuestion: Question | null;
+	question: Question | null;
 	score: number;
+	result: GameResult | null;
+}
+
+interface InitializeGameAction {
+	type: typeof INITIALIZE_GAME;
+	payload: {
+		gameId: string;
+		playerId: string;
+	};
 }
 
 interface UpdateQuestionAction {
@@ -27,4 +44,7 @@ interface UpdateScoreAction {
 	payload: { score: number };
 }
 
-export type GameActionTypes = UpdateQuestionAction | UpdateScoreAction;
+export type GameActionTypes =
+	| InitializeGameAction
+	| UpdateQuestionAction
+	| UpdateScoreAction;
