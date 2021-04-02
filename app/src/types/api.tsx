@@ -891,6 +891,19 @@ export type CreateGameMutation = (
   )> }
 );
 
+export type GameQueryVariables = Exact<{
+  gameId: Scalars['uuid'];
+}>;
+
+
+export type GameQuery = (
+  { __typename?: 'query_root' }
+  & { games_by_pk?: Maybe<(
+    { __typename?: 'games' }
+    & Pick<Games, 'id' | 'creator' | 'contract'>
+  )> }
+);
+
 export type CreatePlayerMutationVariables = Exact<{
   playerObject: Players_Insert_Input;
 }>;
@@ -928,6 +941,19 @@ export const CreateGameDocument = gql`
 
 export function useCreateGameMutation() {
   return Urql.useMutation<CreateGameMutation, CreateGameMutationVariables>(CreateGameDocument);
+};
+export const GameDocument = gql`
+    query Game($gameId: uuid!) {
+  games_by_pk(id: $gameId) {
+    id
+    creator
+    contract
+  }
+}
+    `;
+
+export function useGameQuery(options: Omit<Urql.UseQueryArgs<GameQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GameQuery>({ query: GameDocument, ...options });
 };
 export const CreatePlayerDocument = gql`
     mutation CreatePlayer($playerObject: players_insert_input!) {

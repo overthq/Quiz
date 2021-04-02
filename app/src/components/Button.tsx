@@ -1,20 +1,28 @@
 import React from 'react';
 import {
-	TouchableOpacity,
-	Text,
+	ActivityIndicator,
+	StyleProp,
 	StyleSheet,
-	ActivityIndicator
+	Text,
+	TouchableOpacity,
+	ViewStyle
 } from 'react-native';
 
-interface ButtonProps {
+type ButtonProps = {
 	onPress(): void;
-	loading?: false;
-}
+	readonly loading?: false;
+	readonly style?: StyleProp<ViewStyle>;
+};
 
-const Button: React.FC<ButtonProps> = ({ children, onPress, loading }) => (
+const Button: React.FC<ButtonProps> = ({
+	children,
+	onPress,
+	loading,
+	style
+}) => (
 	<TouchableOpacity
 		onPress={onPress}
-		style={styles.container}
+		style={[styles.container, style]}
 		disabled={loading}
 	>
 		<Text style={styles.text}>{children}</Text>
@@ -34,7 +42,7 @@ const styles = StyleSheet.create({
 	text: {
 		fontSize: 17,
 		fontWeight: '500',
-		backgroundColor: '#FFFFFF'
+		color: '#FFFFFF'
 	},
 	loader: {
 		position: 'absolute',
