@@ -1,9 +1,18 @@
+import React from 'react';
+import {
+	Dimensions,
+	FlatList,
+	StyleSheet,
+	Text,
+	View,
+	LayoutAnimation,
+	Platform,
+	UIManager
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useWalletConnect } from '@walletconnect/react-native-dapp';
 import ethers from 'ethers';
 import { Formik } from 'formik';
-import React from 'react';
-import { Dimensions, FlatList, StyleSheet, Text, View } from 'react-native';
 
 import Button from '../components/Button';
 import Category from '../components/create-game/Category';
@@ -24,12 +33,14 @@ type Values = {
 const slides = [
 	{
 		title: 'Choose a nickname',
-		description: 'This will be your identifier, and can be seen by other players.',
+		description:
+			'This will be your identifier, and can be seen by other players.',
 		content: <Nickname />
 	},
 	{
 		title: 'Set stake',
-		description: 'This amount (in ETH) will be contributed by every player, including yourself. It will be used to fund the prize fund for the winner.',
+		description:
+			'This amount (in ETH) will be contributed by every player, including yourself. It will be used to fund the prize fund for the winner.',
 		content: <Stake />
 	},
 	{
@@ -51,17 +62,35 @@ const slides = [
 
 const { width } = Dimensions.get('window');
 
+if (
+	Platform.OS === 'android' &&
+	UIManager.setLayoutAnimationEnabledExperimental
+) {
+	UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
 const CreateGame = () => {
 	const [slideIndex, setSlideIndex] = React.useState(0);
 	const [loading, setLoading] = React.useState(false);
 
 	const { navigate } = useNavigation();
 	const { accounts, sendTransaction } = useWalletConnect();
+	const listRef = React.useRef<FlatList>();
 
-	const { isLastSlide, isFirstSlide } = React.useMemo(() => ({
-		isLastSlide: slideIndex === slides.length - 1,
-		isFirstSlide: slideIndex === 0
-	}), [slideIndex, slides]);
+	const { isLastSlide } = React.useMemo(
+		() => ({
+			isLastSlide: slideIndex === slides.length - 1,
+			isFirstSlide: slideIndex === 0
+		}),
+		[slideIndex, slides]
+	);
+
+	const handleNext = () => {
+		if (listRef.current) {
+			listRef.current.scrollToIndex({ index: slideIndex + 1, animated: true });
+		}
+		LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+	};
 
 	const handleSubmit = async (values: Values) => {
 		setLoading(true);
@@ -122,13 +151,16 @@ const CreateGame = () => {
 				{({ handleSubmit }) => (
 					<>
 						<FlatList
+							ref={listRef}
 							horizontal
 							keyExtractor={s => s.title}
 							data={slides}
 							renderItem={({ item }) => (
 								<View style={styles.slide}>
 									<Text style={styles.slideHeader}>{item.title}</Text>
-									<Text style={styles.slideDescription}>{item.description}</Text>
+									<Text style={styles.slideDescription}>
+										{item.description}
+									</Text>
 									{item.content}
 								</View>
 							)}
@@ -141,7 +173,13 @@ const CreateGame = () => {
 							decelerationRate='fast'
 							scrollEventThrottle={16}
 						/>
-						<Button onPress={handleSubmit}>Create game</Button>
+						{isLastSlide ? (
+							<Button onPress={handleSubmit} loading={loading}>
+								Create game
+							</Button>
+						) : (
+							<Button onPress={handleNext}>Next</Button>
+						)}
 					</>
 				)}
 			</Formik>

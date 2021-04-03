@@ -10,9 +10,9 @@ import {
 
 interface ButtonProps {
 	onPress(): void;
-	loading?: false;
+	loading?: boolean;
 	style?: StyleProp<ViewStyle>;
-};
+}
 
 const Button: React.FC<ButtonProps> = ({
 	children,

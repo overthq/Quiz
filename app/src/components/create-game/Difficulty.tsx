@@ -17,7 +17,7 @@ const DifficultyOption: React.FC<DifficultyOptionProps> = ({
 		style={[styles.option, selected ? styles.selected : {}]}
 		onPress={onSelect}
 	>
-		<Text>{text}</Text>
+		<Text style={styles.optionText}>{text}</Text>
 	</Pressable>
 );
 
@@ -55,6 +55,10 @@ const styles = StyleSheet.create({
 	selected: {
 		borderColor: '#000000',
 		backgroundColor: '#F7F7F7'
+	},
+	optionText: {
+		fontWeight: '500',
+		fontSize: 18
 	}
 });
 
