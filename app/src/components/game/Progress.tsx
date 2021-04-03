@@ -6,7 +6,7 @@ const Progress = () => {
 	const translateX = useAnimatedStyle(() => {});
 
 	return (
-		<View>
+		<View style={{ height: 10 }}>
 			<Animated.View style={{ transform: [{ translateX }] }} />
 		</View>
 	);

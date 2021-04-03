@@ -28,7 +28,8 @@ const CurrentQuestion: React.FC<CurrentQuestionProps> = ({ question }) => {
 const styles = StyleSheet.create({
 	title: {
 		fontWeight: '500',
-		fontSize: 32
+		fontSize: 24,
+		textAlign: 'center'
 	}
 });
 

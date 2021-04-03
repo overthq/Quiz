@@ -18,7 +18,14 @@ const Game: React.FC = () => {
 		dispatch(setNextQuestion());
 	}, []);
 
+	// Somewhat interesting to explore (nost likely the correct implementation):
+	// When answers are selected, defer the confirmation until time runs out,
+	// but store the time left at the point of answering the question,
+	// so that the RoundStatus can be shown at the same time for everyone.
+	// I might also have to leave some "allowance" for people who submit their answers just before the time runs out.
+
 	if (result) return <RoundStatus result={result} />;
+
 	if (loading) return <LoadingRound round={round} />;
 
 	return (

@@ -1,45 +1,50 @@
-import React from 'react';
-import { View, Text, FlatList, StyleSheet, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Formik } from 'formik';
 import { useWalletConnect } from '@walletconnect/react-native-dapp';
 import ethers from 'ethers';
-import Button from '../components/Button';
-import { setupGame } from '../utils/game';
+import { Formik } from 'formik';
+import React from 'react';
+import { Dimensions, FlatList, StyleSheet, Text, View } from 'react-native';
 
-import Nickname from '../components/create-game/Nickname';
-import Stake from '../components/create-game/Stake';
+import Button from '../components/Button';
 import Category from '../components/create-game/Category';
 import Difficulty from '../components/create-game/Difficulty';
+import Nickname from '../components/create-game/Nickname';
 import Rounds from '../components/create-game/Rounds';
+import Stake from '../components/create-game/Stake';
+import { setupGame } from '../utils/game';
 
-interface Values {
-	nickname: string;
-	stake: number;
-	category?: number;
-	difficulty: 'easy' | 'medium' | 'hard';
-	rounds: number;
-}
+type Values = {
+	readonly nickname: string;
+	readonly stake: number;
+	readonly category?: number;
+	readonly difficulty: 'easy' | 'medium' | 'hard';
+	readonly rounds: number;
+};
 
 const slides = [
 	{
 		title: 'Choose a nickname',
+		description: 'This will be your identifier, and can be seen by other players.',
 		content: <Nickname />
 	},
 	{
 		title: 'Set stake',
+		description: 'This amount (in ETH) will be contributed by every player, including yourself. It will be used to fund the prize fund for the winner.',
 		content: <Stake />
 	},
 	{
 		title: 'Choose category',
+		description: 'Select a category to limit questions to a certain genre.',
 		content: <Category />
 	},
 	{
 		title: 'Set difficulty',
+		description: 'Choose a difficulty for the quiz questions',
 		content: <Difficulty />
 	},
 	{
 		title: 'Number of rounds',
+		description: 'Select the number of rounds you would like the game to last',
 		content: <Rounds />
 	}
 ];
@@ -53,31 +58,38 @@ const CreateGame = () => {
 	const { navigate } = useNavigation();
 	const { accounts, sendTransaction } = useWalletConnect();
 
+	const { isLastSlide, isFirstSlide } = React.useMemo(() => ({
+		isLastSlide: slideIndex === slides.length - 1,
+		isFirstSlide: slideIndex === 0
+	}), [slideIndex, slides]);
+
 	const handleSubmit = async (values: Values) => {
 		setLoading(true);
 		const { nickname, stake, category, difficulty, rounds } = values;
 
 		const data = await setupGame({
-			nickname,
 			address: accounts[0],
-			stake,
 			category,
 			difficulty,
-			rounds
+			nickname,
+			rounds,
+			stake
 		});
 
-		// - Pay split to contract using WalletConnect
+		// Pay split to contract using WalletConnect
+		// Should I copy over the ABI fron the server to the client?
+		// How do I call a contract function using WalletConnect's sendTransaction API?
 
 		await sendTransaction({
 			from: accounts[0],
-			to: data.insert_games_one.contract,
 			gas: 0,
 			gasPrice: 0,
-			value: ethers.utils.parseEther(stake.toString()).toString(),
-			nonce: ''
+			nonce: '',
+			to: data.insert_games_one.contract,
+			value: ethers.utils.parseEther(stake.toString()).toString()
 		});
 
-		// Listen for the result from the wallet, and update the UI accordingly
+		// Listen for the result from the wallet, and update the UI accordingly.
 
 		setLoading(false);
 
@@ -114,8 +126,9 @@ const CreateGame = () => {
 							keyExtractor={s => s.title}
 							data={slides}
 							renderItem={({ item }) => (
-								<View>
-									<Text>{item.title}</Text>
+								<View style={styles.slide}>
+									<Text style={styles.slideHeader}>{item.title}</Text>
+									<Text style={styles.slideDescription}>{item.description}</Text>
 									{item.content}
 								</View>
 							)}
@@ -143,6 +156,13 @@ const styles = StyleSheet.create({
 	slide: {
 		width,
 		paddingHorizontal: 16
+	},
+	slideHeader: {
+		fontWeight: 'bold',
+		fontSize: 32
+	},
+	slideDescription: {
+		fontSize: 16
 	}
 });
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { AppStackParamList } from '../types/navigation';
 import Button from '../components/Button';
@@ -13,7 +13,7 @@ const Lobby = () => {
 		params: { gameId, role }
 	} = useRoute<RouteProp<AppStackParamList, 'Lobby'>>();
 
-	const [,] = useGamePlayersSubscription({ variables: { gameId } });
+	const [{ data }] = useGamePlayersSubscription({ variables: { gameId } });
 	const [, createPlayer] = useCreatePlayerMutation();
 
 	const { navigate } = useNavigation();
@@ -35,8 +35,16 @@ const Lobby = () => {
 
 	return (
 		<View style={styles.container}>
-			<Text>Game starting</Text>
-			<Text>Waiting for more players to join...</Text>
+			<Text>Lobby</Text>
+			<FlatList
+				keyExtractor={p => p.id}
+				data={data.players}
+				renderItem={({ item }) => (
+					<View style={{ width: '100%', height: 40, padding: 8 }}>
+						<Text style={{ fontSize: 16 }}>{item.nickname}</Text>
+					</View>
+				)}
+			/>
 			{role === 'creator' ? (
 				<Button onPress={startGame}>Start game</Button>
 			) : (

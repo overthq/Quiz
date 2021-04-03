@@ -8,6 +8,7 @@ interface RoundStatusProps {
 
 const RoundStatus: React.FC<RoundStatusProps> = ({ result }) => {
 	const { isCorrect, correctAnswer } = result;
+	// Maybe useSubscription to get new score here?
 
 	return (
 		<View

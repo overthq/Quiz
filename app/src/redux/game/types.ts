@@ -1,7 +1,6 @@
 export const INITIALIZE_GAME = 'game/INITIALIZE_GAME';
 export const UPDATE_QUESTION = 'game/UPDATE_QUESTION';
 export const UPDATE_SCORE = 'game/UPDATE_SCORE';
-export const SET_RESULT = 'game/SET_RESULT';
 
 export interface Question {
 	question: string;
@@ -41,7 +40,11 @@ interface UpdateQuestionAction {
 
 interface UpdateScoreAction {
 	type: typeof UPDATE_SCORE;
-	payload: { score: number };
+	payload: {
+		score: number;
+		isCorrect: boolean;
+		correctAnswer: string;
+	};
 }
 
 export type GameActionTypes =

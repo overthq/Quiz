@@ -9,6 +9,8 @@ interface QuestionOptionProps {
 const QuestionOption: React.FC<QuestionOptionProps> = ({ text, onSelect }) => {
 	const handlePress = () => onSelect(text);
 
+	// Scale animation onPress
+
 	return (
 		<Pressable onPress={handlePress} style={styles.container}>
 			<Text>{text}</Text>

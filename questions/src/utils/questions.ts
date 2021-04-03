@@ -89,7 +89,10 @@ export const checkAnswerCorrect = async ({ gameId, round, option }) => {
 		const question = await getAsync(`${gameId}-${round}`);
 		const parsedQuestion = JSON.parse(question);
 
-		return parsedQuestion.correct === option;
+		return {
+			isCorrect: parsedQuestion.correct === option,
+			correctAnswer: parsedQuestion.correct
+		};
 	} catch (error) {
 		console.log(error);
 	}

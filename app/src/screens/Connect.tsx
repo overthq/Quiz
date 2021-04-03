@@ -12,8 +12,8 @@ const Connect: React.FC = () => {
 
 	return (
 		<View style={styles.container}>
-			<Text>Welcome to Quiz!</Text>
-			<Button onPress={connectToWallet}>Connect to wallet</Button>
+			<Text style={styles.heading}>Welcome to Quiz!</Text>
+			<Button onPress={connectToWallet}>Connect your wallet</Button>
 		</View>
 	);
 };
@@ -21,6 +21,10 @@ const Connect: React.FC = () => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1
+	},
+	heading: {
+		fontSize: 32,
+		fontWeight: 'bold'
 	}
 });
 

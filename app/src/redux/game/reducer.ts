@@ -28,12 +28,17 @@ const gameReducer = (state = initialState, action: GameActionTypes) => {
 			return {
 				...state,
 				round: state.round + 1,
-				question: action.payload.question
+				question: action.payload.question,
+				result: null
 			};
 		case UPDATE_SCORE:
 			return {
 				...state,
-				score: action.payload.score
+				score: action.payload.score,
+				result: {
+					isCorrect: action.payload.isCorrect,
+					correctAnswer: action.payload.CorrectAnswer
+				}
 			};
 		default:
 			return state;

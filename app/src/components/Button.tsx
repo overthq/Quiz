@@ -8,10 +8,10 @@ import {
 	ViewStyle
 } from 'react-native';
 
-type ButtonProps = {
+interface ButtonProps {
 	onPress(): void;
-	readonly loading?: false;
-	readonly style?: StyleProp<ViewStyle>;
+	loading?: false;
+	style?: StyleProp<ViewStyle>;
 };
 
 const Button: React.FC<ButtonProps> = ({

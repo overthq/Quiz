@@ -34,7 +34,9 @@ export const answerQuestion = (option: string): AppThunk => async (
 		const { data } = await sendAnswer({ gameId, playerId, round, option });
 		dispatch({
 			type: UPDATE_SCORE,
-			payload: { score: data.score }
+			payload: { score: data.score, isCorrect: data.isCorrect, correctAnswer: data.correctAnswer }
 		});
+	} else {
+		throw new Error('gameId or playerId not specified');
 	}
 };

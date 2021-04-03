@@ -9,6 +9,7 @@ import {
 } from './utils/questions';
 import SETUP_GAME from './queries/SETUP_GAME';
 import CREATE_GAME from './queries/CREATE_GAME';
+import UPDATE_SCORE from './queries/UPDATE_SCORE';
 
 const router = Router();
 
@@ -76,30 +77,23 @@ router.post('/answer/:gameId/:round', async (req, res) => {
 	const { gameId, round } = req.params;
 	const { playerId, option, timeLeft } = req.body;
 
-	const correct = await checkAnswerCorrect({ gameId, round, option });
+	const { isCorrect, correctAnswer } = await checkAnswerCorrect({ gameId, round, option });
 	const score = correct ? 10 * timeLeft : 0;
 
 	try {
-		await client.request(
-			gql`
-				mutation UpdateScore($playerId: uuid!, $score: Int!) {
-					update_players_by_pk(
-						pk_columns: { id: $playerId }
-						_inc: { score: $score }
-					) {
-						id
-						score
-					}
-				}
-			`,
-			{ playerId, score }
-		);
+		const data = await client.request(UPDATE_SCORE, { playerId, score });
+		return res.status(200).json({
+			success: true,
+			data: {
+				score: data.score,
+				isCorrect,
+				correctAnswer,
+			}
+		});
 	} catch (error) {
 		return res.status(500).json({
 			success: false,
-			data: {
-				message: error.message
-			}
+			data: { message: error.message }
 		});
 	}
 });
