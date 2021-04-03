@@ -1,4 +1,18 @@
 {
+	"name": "@quiz/app",
+	"version": "1.0.0",
+	"license": "MIT",
+	"private": true,
+	"scripts": {
+		"start": "react-native start",
+		"android": "node_modules/.bin/ts-node scripts/android",
+		"ios": "node_modules/.bin/ts-node scripts/ios",
+		"web": "node_modules/.bin/ts-node scripts/web",
+		"eject": "expo eject",
+		"postinstall": "node_modules/.bin/ts-node scripts/postinstall",
+		"test": "npx hardhat test && jest",
+		"generate-types": "graphql-codegen --config codegen.yml"
+	},
 	"dependencies": {
 		"@react-native-async-storage/async-storage": "^1.14.1",
 		"@react-native-community/masked-view": "^0.1.10",
@@ -77,36 +91,6 @@
 		"ts-node": "9.1.1",
 		"typescript": "~4.0.0"
 	},
-	"scripts": {
-		"start": "react-native start",
-		"android": "node_modules/.bin/ts-node scripts/android",
-		"ios": "node_modules/.bin/ts-node scripts/ios",
-		"web": "node_modules/.bin/ts-node scripts/web",
-		"eject": "expo eject",
-		"postinstall": "node_modules/.bin/ts-node scripts/postinstall",
-		"test": "npx hardhat test && jest",
-		"generate-types": "graphql-codegen --config codegen.yml"
-	},
-	"private": true,
-	"name": "@quiz/app",
-	"version": "1.0.0",
-	"license": "MIT",
-	"contributors": [
-		{
-			"name": "@cawfree",
-			"url": "https://github.com/cawfree"
-		}
-	],
-	"keywords": [
-		"react",
-		"react-native",
-		"blockchain",
-		"dapp",
-		"ethereum",
-		"web3",
-		"starter",
-		"react-native-web"
-	],
 	"react-native": {
 		"stream": "react-native-stream",
 		"crypto": "react-native-crypto",
@@ -118,20 +102,5 @@
 		"testMatch": [
 			"**/__tests__/frontend/**/*.[jt]s?(x)"
 		]
-	},
-	"config": {
-		"commitizen": {
-			"path": "./node_modules/cz-conventional-changelog"
-		}
-	},
-	"husky": {
-		"hooks": {
-			"prepare-commit-msg": "exec < /dev/tty && git cz --hook",
-			"pre-commit": "lint-staged",
-			"pre-push": "test"
-		}
-	},
-	"lint-staged": {
-		"*.{ts,tsx,js,jsx}": "eslint --ext '.ts,.tsx,.js,.jsx' -c .eslintrc.json"
 	}
 }
