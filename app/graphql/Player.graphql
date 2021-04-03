@@ -11,3 +11,10 @@ subscription GamePlayers($gameId: uuid!) {
 		address
 	}
 }
+
+subscription PlayerScore($playerId: uuid!) {
+	player_by_pk(id: $playerId) {
+		id
+		score
+	}
+}

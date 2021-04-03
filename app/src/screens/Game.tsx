@@ -6,6 +6,7 @@ import CurrentQuestion from '../components/game/CurrentQuestion';
 import { useAppSelector } from '../redux/store';
 import LoadingRound from '../components/game/LoadingRound';
 import RoundStatus from '../components/game/RoundStatus';
+import Score from '../components/game/Score';
 import { setNextQuestion } from '../redux/game/actions';
 
 const Game: React.FC = () => {
@@ -32,6 +33,7 @@ const Game: React.FC = () => {
 		question && (
 			<View style={styles.container}>
 				<Progress />
+				<Score />
 				<CurrentQuestion question={question} />
 			</View>
 		)
