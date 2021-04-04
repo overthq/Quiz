@@ -1,25 +1,22 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { useDispatch } from 'react-redux';
 import QuestionOption from './QuestionOption';
 import { Question } from '../../redux/game/types';
-import { answerQuestion } from '../../redux/game/actions';
 
 interface CurrentQuestionProps {
 	question: Question;
+	setOption(option: string): void;
 }
 
-const CurrentQuestion: React.FC<CurrentQuestionProps> = ({ question }) => {
-	const dispatch = useDispatch();
-	const handleSelect = (option: string) => {
-		dispatch(answerQuestion(option));
-	};
-
+const CurrentQuestion: React.FC<CurrentQuestionProps> = ({
+	question,
+	setOption
+}) => {
 	return (
 		<View>
 			<Text style={styles.title}>{question.question}</Text>
 			{question.options.map(option => (
-				<QuestionOption text={option} onSelect={handleSelect} />
+				<QuestionOption text={option} onSelect={setOption} />
 			))}
 		</View>
 	);

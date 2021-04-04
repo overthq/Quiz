@@ -7,23 +7,37 @@ import { useAppSelector } from '../redux/store';
 import LoadingRound from '../components/game/LoadingRound';
 import RoundStatus from '../components/game/RoundStatus';
 import Score from '../components/game/Score';
-import { setNextQuestion } from '../redux/game/actions';
+import { setNextQuestion, answerQuestion } from '../redux/game/actions';
 
 const Game: React.FC = () => {
 	const dispatch = useDispatch();
 	const { loading, question, round, result } = useAppSelector(
 		({ game }) => game
 	);
+	const [timeLeft, setTimeLeft] = React.useState(10);
+	const [option, setOption] = React.useState('');
+
+	React.useEffect(() => {
+		if (timeLeft === 0) {
+			dispatch(answerQuestion(option));
+		}
+	}, [timeLeft]);
+
+	React.useEffect(() => {
+		const timeout = setTimeout(() => {
+			if (timeLeft > 0) {
+				setTimeLeft(timeLeft - 1);
+			}
+		}, 1000);
+
+		return () => {
+			clearTimeout(timeout);
+		};
+	});
 
 	React.useEffect(() => {
 		dispatch(setNextQuestion());
 	}, []);
-
-	// Somewhat interesting to explore (nost likely the correct implementation):
-	// When answers are selected, defer the confirmation until time runs out,
-	// but store the time left at the point of answering the question,
-	// so that the RoundStatus can be shown at the same time for everyone.
-	// I might also have to leave some "allowance" for people who submit their answers just before the time runs out.
 
 	if (result) return <RoundStatus result={result} />;
 
@@ -32,9 +46,9 @@ const Game: React.FC = () => {
 	return (
 		question && (
 			<View style={styles.container}>
-				<Progress />
+				<Progress ended={!!option} />
 				<Score />
-				<CurrentQuestion question={question} />
+				<CurrentQuestion question={question} setOption={setOption} />
 			</View>
 		)
 	);
@@ -42,7 +56,9 @@ const Game: React.FC = () => {
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1
+		flex: 1,
+		paddingHorizontal: 16,
+		paddingVertical: 8
 	}
 });
 
