@@ -2,7 +2,7 @@
 pragma solidity ^0.7.0;
 
 contract Quiz {
-	address deployer;
+	address payable deployer;
 	uint256 stake;
 
 	constructor(uint256 _stake) {
@@ -17,11 +17,11 @@ contract Quiz {
 		);
 	}
 
-	function payout(address winner) public {
+	function payout(address payable winner) public {
 		require(msg.sender == deployer, 'Only the deployer can trigger the payout');
 
 		uint256 currentBalance = (address(this)).balance;
-		uint256 fees = 0.05 * currentBalance;
+		uint256 fees = currentBalance / 20;
 
 		address(uint160(deployer)).transfer(fees);
 		address(uint160(winner)).transfer(currentBalance - fees);

@@ -1,0 +1,39 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/Users/korede/Overt/Quiz/questions/contracts/Quiz.sol": {
+      "lastModificationDate": 1617484569676,
+      "contentHash": "cfe8fd67b510a5f0a94096930b46fc53",
+      "sourceName": "contracts/Quiz.sol",
+      "solcConfig": {
+        "version": "0.7.3",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.0"
+      ],
+      "artifacts": [
+        "Quiz"
+      ]
+    }
+  }
+}
