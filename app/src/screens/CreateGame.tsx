@@ -11,8 +11,9 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useWalletConnect } from '@walletconnect/react-native-dapp';
-import ethers from 'ethers';
+// import ethers from 'ethers';
 import { Formik } from 'formik';
+import web3 from 'web3';
 
 import Button from '../components/Button';
 import Category from '../components/create-game/Category';
@@ -22,13 +23,13 @@ import Rounds from '../components/create-game/Rounds';
 import Stake from '../components/create-game/Stake';
 import { setupGame } from '../utils/game';
 
-type Values = {
-	readonly nickname: string;
-	readonly stake: number;
-	readonly category?: number;
-	readonly difficulty: 'easy' | 'medium' | 'hard';
-	readonly rounds: number;
-};
+interface Values {
+	nickname: string;
+	stake: number;
+	category?: number;
+	difficulty: 'easy' | 'medium' | 'hard';
+	rounds: number;
+}
 
 const slides = [
 	{
@@ -94,6 +95,7 @@ const CreateGame = () => {
 
 	const handleSubmit = async (values: Values) => {
 		setLoading(true);
+
 		const { nickname, stake, category, difficulty, rounds } = values;
 
 		const data = await setupGame({
@@ -105,20 +107,15 @@ const CreateGame = () => {
 			stake
 		});
 
-		// Pay split to contract using WalletConnect
-		// Should I copy over the ABI fron the server to the client?
-		// How do I call a contract function using WalletConnect's sendTransaction API?
-
-		await sendTransaction({
+		const result = await sendTransaction({
 			from: accounts[0],
-			gas: 0,
-			gasPrice: 0,
-			nonce: '',
-			to: data.insert_games_one.contract,
-			value: ethers.utils.parseEther(stake.toString()).toString()
+			to: data.contract,
+			gas: 5000,
+			gasPrice: web3.utils.toWei('40', 'gwei'),
+			value: web3.utils.toWei(stake.toString(), 'ether')
 		});
 
-		// Listen for the result from the wallet, and update the UI accordingly.
+		console.log(result);
 
 		setLoading(false);
 
@@ -197,7 +194,8 @@ const styles = StyleSheet.create({
 	},
 	slideHeader: {
 		fontWeight: 'bold',
-		fontSize: 32
+		fontSize: 32,
+		marginBottom: 8
 	},
 	slideDescription: {
 		fontSize: 16

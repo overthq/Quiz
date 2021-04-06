@@ -9,7 +9,7 @@ interface SetupGamePayload {
 
 export const setupGame = async (options: SetupGamePayload) => {
 	try {
-		const response = await fetch('/setup', {
+		const response = await fetch('http://localhost:5050/setup', {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',
@@ -17,7 +17,7 @@ export const setupGame = async (options: SetupGamePayload) => {
 			},
 			body: JSON.stringify(options)
 		});
-		const data = await response.json();
+		const { data } = await response.json();
 		return data;
 	} catch (error) {
 		console.log(error);

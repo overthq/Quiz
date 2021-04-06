@@ -24,6 +24,7 @@ const Button: React.FC<ButtonProps> = ({
 		onPress={onPress}
 		style={[styles.container, style]}
 		disabled={loading}
+		activeOpacity={0.7}
 	>
 		<Text style={styles.text}>{children}</Text>
 		{loading && <ActivityIndicator style={styles.loader} />}
@@ -33,7 +34,7 @@ const Button: React.FC<ButtonProps> = ({
 const styles = StyleSheet.create({
 	container: {
 		width: '100%',
-		height: 40,
+		height: 45,
 		borderRadius: 6,
 		backgroundColor: '#000000',
 		justifyContent: 'center',

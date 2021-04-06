@@ -29,6 +29,12 @@ interface CacheQuestionsOptions {
 	rounds?: number;
 }
 
+interface OTDQuestion {
+	question: string;
+	correct_answer: string;
+	incorrect_answers: string[];
+}
+
 export const cacheQuestions = async ({
 	gameId,
 	category,
@@ -50,7 +56,7 @@ export const cacheQuestions = async ({
 	const data = await response.json();
 
 	const questionsCachedForm = data.results.map(
-		(question: any, index: number) => [
+		(question: OTDQuestion, index: number) => [
 			`${gameId}-${index}`,
 			JSON.stringify({
 				question: question.question,

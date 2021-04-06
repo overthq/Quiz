@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { gql, GraphQLClient } from 'graphql-request';
+import { GraphQLClient } from 'graphql-request';
 import '@nomiclabs/hardhat-waffle';
 import { ethers } from 'hardhat';
 import {
@@ -13,11 +13,7 @@ import UPDATE_SCORE from './queries/UPDATE_SCORE';
 
 const router = Router();
 
-const client = new GraphQLClient(process.env.HASURA_URL as string, {
-	headers: {
-		'X-Hasura-Admin-Secret': process.env.HASURA_ADMIN_SECRET as string
-	}
-});
+const client = new GraphQLClient(process.env.HASURA_URL as string);
 
 router.post('/setup', async (req, res) => {
 	const { nickname, address, stake, category, difficulty, rounds } = req.body;
@@ -48,7 +44,13 @@ router.post('/setup', async (req, res) => {
 			address
 		});
 
-		res.status(201).json({ success: true, data });
+		res.status(201).json({
+			success: true,
+			data: {
+				gameId: data.update_games_by_pk.id,
+				contract: data.update_games_by_pk.contract
+			}
+		});
 	} catch (error) {
 		res.status(500).json({
 			success: false,
@@ -77,8 +79,13 @@ router.post('/answer/:gameId/:round', async (req, res) => {
 	const { gameId, round } = req.params;
 	const { playerId, option, timeLeft } = req.body;
 
-	const { isCorrect, correctAnswer } = await checkAnswerCorrect({ gameId, round, option });
-	const score = correct ? 10 * timeLeft : 0;
+	const { isCorrect, correctAnswer } = await checkAnswerCorrect({
+		gameId,
+		round,
+		option
+	});
+
+	const score = isCorrect ? 10 * timeLeft : 0;
 
 	try {
 		const data = await client.request(UPDATE_SCORE, { playerId, score });
@@ -87,7 +94,7 @@ router.post('/answer/:gameId/:round', async (req, res) => {
 			data: {
 				score: data.score,
 				isCorrect,
-				correctAnswer,
+				correctAnswer
 			}
 		});
 	} catch (error) {
