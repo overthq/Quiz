@@ -9,7 +9,7 @@ const Connect: React.FC = () => {
 	return (
 		<View style={styles.container}>
 			<Text style={styles.heading}>Welcome to Quiz!</Text>
-			<Button onPress={connect}>Connect your wallet</Button>
+			<Button onPress={() => connect()}>Connect your wallet</Button>
 		</View>
 	);
 };
