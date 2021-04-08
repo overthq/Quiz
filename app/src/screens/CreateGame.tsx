@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useWalletConnect } from '@walletconnect/react-native-dapp';
-// import ethers from 'ethers';
 import { Formik } from 'formik';
 import web3 from 'web3';
 
@@ -98,21 +97,23 @@ const CreateGame = () => {
 
 		const { nickname, stake, category, difficulty, rounds } = values;
 
+		const stakeInWei = web3.utils.toWei(stake.toString(), 'ether');
+
 		const data = await setupGame({
 			address: accounts[0],
 			category,
 			difficulty,
 			nickname,
 			rounds,
-			stake
+			stake: Number(stakeInWei)
 		});
 
 		const result = await sendTransaction({
 			from: accounts[0],
 			to: data.contract,
-			gas: 5000,
-			gasPrice: web3.utils.toWei('40', 'gwei'),
-			value: web3.utils.toWei(stake.toString(), 'ether')
+			gas: 5000, // Don't hardcode this.
+			gasPrice: web3.utils.toWei('40', 'gwei'), // Copy algo to generate optimal gasPrice
+			value: stakeInWei
 		});
 
 		console.log(result);
