@@ -48,7 +48,11 @@ const Game: React.FC = () => {
 			<View style={styles.container}>
 				<Progress ended={!!option} />
 				<Score />
-				<CurrentQuestion question={question} setOption={setOption} />
+				<CurrentQuestion
+					question={question}
+					setOption={setOption}
+					answered={!!option}
+				/>
 			</View>
 		)
 	);

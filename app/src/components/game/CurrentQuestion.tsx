@@ -6,17 +6,24 @@ import { Question } from '../../redux/game/types';
 interface CurrentQuestionProps {
 	question: Question;
 	setOption(option: string): void;
+	answered: boolean;
 }
 
 const CurrentQuestion: React.FC<CurrentQuestionProps> = ({
 	question,
-	setOption
+	setOption,
+	answered
 }) => {
 	return (
 		<View>
 			<Text style={styles.title}>{question.question}</Text>
 			{question.options.map(option => (
-				<QuestionOption text={option} onSelect={setOption} />
+				<QuestionOption
+					key={option}
+					text={option}
+					onSelect={setOption}
+					disabled={answered}
+				/>
 			))}
 		</View>
 	);
