@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { GraphQLClient } from 'graphql-request';
-import '@nomiclabs/hardhat-waffle';
-import { ethers } from 'hardhat';
+import { ContractFactory } from 'ethers';
 import {
 	cacheQuestions,
 	checkAnswerCorrect,
@@ -10,6 +9,8 @@ import {
 import SETUP_GAME from './queries/SETUP_GAME';
 import CREATE_GAME from './queries/CREATE_GAME';
 import UPDATE_SCORE from './queries/UPDATE_SCORE';
+
+import QuizArtifact from './abis/Quiz.json';
 
 const router = Router();
 
@@ -24,7 +25,7 @@ router.post('/setup', async (req, res) => {
 		});
 		const gameId = insert_games_one.id;
 
-		const Quiz = await ethers.getContractFactory('Quiz');
+		const Quiz = new ContractFactory(QuizArtifact.abi, QuizArtifact.bytecode);
 
 		const [, quiz] = await Promise.all([
 			cacheQuestions({
