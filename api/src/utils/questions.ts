@@ -3,11 +3,36 @@ import client from '../config/redis';
 
 const getAsync = promisify(client.get).bind(client);
 
+// Fisher-Yates (Knuth) Shuffle.
+// https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+const shuffle = (array: string[]) => {
+	let currentIndex = array.length;
+	let temporaryValue: string;
+	let randomIndex: number;
+
+	while (0 !== currentIndex) {
+		randomIndex = Math.floor(Math.random() * currentIndex);
+		currentIndex -= 1;
+
+		temporaryValue = array[currentIndex];
+		array[currentIndex] = array[randomIndex];
+		array[randomIndex] = temporaryValue;
+	}
+
+	return array;
+};
+
 interface CacheQuestionsOptions {
 	gameId: string;
 	category?: number;
 	difficulty?: 'easy' | 'medium' | 'hard';
 	rounds?: number;
+}
+
+interface OTDQuestion {
+	question: string;
+	correct_answer: string;
+	incorrect_answers: string[];
 }
 
 export const cacheQuestions = async ({
@@ -31,7 +56,7 @@ export const cacheQuestions = async ({
 	const data = await response.json();
 
 	const questionsCachedForm = data.results.map(
-		(question: any, index: number) => [
+		(question: OTDQuestion, index: number) => [
 			`${gameId}-${index}`,
 			JSON.stringify({
 				question: question.question,
@@ -56,22 +81,25 @@ export const getQuestion = async ({ gameId, round }: GetQuestionOptions) => {
 		const question = await getAsync(`${gameId}-${round}`);
 		const parsedQuestion = JSON.parse(question);
 
-		// Get and randomize the array of questions.
-
-		return parsedQuestion;
+		return {
+			question: parsedQuestion,
+			options: shuffle([parsedQuestion.correct, ...parsedQuestion.incorrect])
+		};
 	} catch (error) {
 		console.log(error);
 	}
 };
 
-interface GetAnswerOptions {
-	gameId: string;
-	round: number;
-	option: string;
-}
+export const checkAnswerCorrect = async ({ gameId, round, option }) => {
+	try {
+		const question = await getAsync(`${gameId}-${round}`);
+		const parsedQuestion = JSON.parse(question);
 
-export const getAnswer = async ({
-	gameId,
-	round,
-	option
-}: GetAnswerOptions) => {};
+		return {
+			isCorrect: parsedQuestion.correct === option,
+			correctAnswer: parsedQuestion.correct
+		};
+	} catch (error) {
+		console.log(error);
+	}
+};

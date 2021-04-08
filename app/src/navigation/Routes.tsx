@@ -10,12 +10,14 @@ import Game from '../screens/Game';
 const AppStack = createStackNavigator();
 
 const Routes = () => {
-	const { connected } = useWalletConnect();
+	const connector = useWalletConnect();
 
 	return (
 		<NavigationContainer>
 			<AppStack.Navigator headerMode='none'>
-				{!connected && <AppStack.Screen name='Connect' component={Connect} />}
+				{!connector.connected && (
+					<AppStack.Screen name='Connect' component={Connect} />
+				)}
 				<AppStack.Screen name='Home' component={Home} />
 				<AppStack.Screen name='Game' component={Game} />
 			</AppStack.Navigator>
