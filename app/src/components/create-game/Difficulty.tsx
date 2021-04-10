@@ -22,7 +22,7 @@ const DifficultyOption: React.FC<DifficultyOptionProps> = ({
 );
 
 const Difficulty = () => {
-	const { values, handleChange } = useFormikContext<{
+	const { values, setFieldValue } = useFormikContext<{
 		difficulty: 'easy' | 'medium' | 'hard';
 	}>();
 
@@ -30,9 +30,10 @@ const Difficulty = () => {
 		<View style={styles.container}>
 			{['easy', 'medium', 'hard'].map(value => (
 				<DifficultyOption
-					text={value[0] + value.substr(1)}
+					key={value}
+					text={value[0].toUpperCase() + value.substr(1)}
 					selected={values.difficulty === value}
-					onSelect={() => handleChange(value)}
+					onSelect={() => setFieldValue('difficulty', value)}
 				/>
 			))}
 		</View>
@@ -41,16 +42,17 @@ const Difficulty = () => {
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
-		paddingHorizontal: 16
+		flex: 1
 	},
 	option: {
 		borderRadius: 4,
 		borderWidth: 2,
 		height: 40,
-		padding: 16,
 		borderColor: '#505050',
-		backgroundColor: '#FFFFFF'
+		backgroundColor: '#FFFFFF',
+		marginTop: 8,
+		paddingLeft: 8,
+		justifyContent: 'center'
 	},
 	selected: {
 		borderColor: '#000000',

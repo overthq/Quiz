@@ -24,7 +24,7 @@ import { setupGame } from '../utils/game';
 
 interface Values {
 	nickname: string;
-	stake: number;
+	stake: string;
 	category?: number;
 	difficulty: 'easy' | 'medium' | 'hard';
 	rounds: number;
@@ -97,7 +97,7 @@ const CreateGame = () => {
 
 		const { nickname, stake, category, difficulty, rounds } = values;
 
-		const stakeInWei = web3.utils.toWei(stake.toString(), 'ether');
+		const stakeInWei = web3.utils.toWei(stake, 'ether');
 
 		const data = await setupGame({
 			address: accounts[0],
@@ -132,14 +132,10 @@ const CreateGame = () => {
 
 	return (
 		<View style={styles.container}>
-			<Text>Create game</Text>
-			<Text>
-				This form will guide you through the process of creating a game
-			</Text>
 			<Formik
 				initialValues={{
 					nickname: '',
-					stake: 0,
+					stake: '0',
 					rounds: 10,
 					category: undefined,
 					difficulty: 'easy'
@@ -171,13 +167,15 @@ const CreateGame = () => {
 							decelerationRate='fast'
 							scrollEventThrottle={16}
 						/>
-						{isLastSlide ? (
-							<Button onPress={handleSubmit} loading={loading}>
-								Create game
-							</Button>
-						) : (
-							<Button onPress={handleNext}>Next</Button>
-						)}
+						<View style={styles.buttonContainer}>
+							{isLastSlide ? (
+								<Button onPress={handleSubmit} loading={loading}>
+									Create game
+								</Button>
+							) : (
+								<Button onPress={handleNext}>Next</Button>
+							)}
+						</View>
 					</>
 				)}
 			</Formik>
@@ -190,16 +188,24 @@ const styles = StyleSheet.create({
 		flex: 1
 	},
 	slide: {
+		backgroundColor: '#FFFFFF',
 		width,
 		paddingHorizontal: 16
 	},
 	slideHeader: {
 		fontWeight: 'bold',
 		fontSize: 32,
-		marginBottom: 8
+		color: '#000000',
+		marginVertical: 8
 	},
 	slideDescription: {
-		fontSize: 16
+		fontSize: 16,
+		marginBottom: 8
+	},
+	buttonContainer: {
+		marginBottom: 16,
+		paddingHorizontal: 16,
+		width: '100%'
 	}
 });
 

@@ -4,11 +4,7 @@ import { useWalletConnect } from '@walletconnect/react-native-dapp';
 import Button from '../components/Button';
 
 const Connect: React.FC = () => {
-	const { connect, killSession } = useWalletConnect();
-
-	React.useEffect(() => {
-		killSession();
-	}, []);
+	const { connect } = useWalletConnect();
 
 	return (
 		<View style={styles.container}>
