@@ -135,7 +135,7 @@ const CreateGame = () => {
 			<Formik
 				initialValues={{
 					nickname: '',
-					stake: '0',
+					stake: '',
 					rounds: 10,
 					category: undefined,
 					difficulty: 'easy'

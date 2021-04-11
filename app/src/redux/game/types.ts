@@ -1,6 +1,7 @@
 export const INITIALIZE_GAME = 'game/INITIALIZE_GAME';
 export const UPDATE_QUESTION = 'game/UPDATE_QUESTION';
 export const UPDATE_SCORE = 'game/UPDATE_SCORE';
+export const RESET_GAME = 'game/RESET_GAME';
 
 export interface Question {
 	question: string;
@@ -47,7 +48,12 @@ interface UpdateScoreAction {
 	};
 }
 
+interface ResetGameAction {
+	type: typeof RESET_GAME;
+}
+
 export type GameActionTypes =
 	| InitializeGameAction
 	| UpdateQuestionAction
-	| UpdateScoreAction;
+	| UpdateScoreAction
+	| ResetGameAction;

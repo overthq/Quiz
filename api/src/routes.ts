@@ -106,4 +106,7 @@ router.post('/answer/:gameId/:round', async (req, res) => {
 	}
 });
 
+// How do we finalize that the game has ended?
+// We can call a function on app close, that ends the game for the given player, and resets the game state.
+
 export default router;

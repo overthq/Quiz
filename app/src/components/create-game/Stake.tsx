@@ -13,6 +13,7 @@ const Stake = () => {
 	return (
 		<View style={styles.container}>
 			<TextInput
+				placeholder='0.00'
 				style={styles.input}
 				value={values.stake}
 				onChangeText={handleChange('stake')}
@@ -23,13 +24,15 @@ const Stake = () => {
 
 const styles = StyleSheet.create({
 	container: {
-		width: '100%'
+		width: '100%',
+		alignItems: 'center'
 	},
 	input: {
 		borderColor: '#505050',
 		borderWidth: 2,
 		height: 45,
-		paddingLeft: 8
+		paddingLeft: 8,
+		fontSize: 20
 	}
 });
 

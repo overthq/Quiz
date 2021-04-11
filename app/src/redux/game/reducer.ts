@@ -3,7 +3,8 @@ import {
 	GameState,
 	INITIALIZE_GAME,
 	UPDATE_QUESTION,
-	UPDATE_SCORE
+	UPDATE_SCORE,
+	RESET_GAME
 } from './types';
 
 const initialState: GameState = {
@@ -37,9 +38,11 @@ const gameReducer = (state = initialState, action: GameActionTypes) => {
 				score: action.payload.score,
 				result: {
 					isCorrect: action.payload.isCorrect,
-					correctAnswer: action.payload.CorrectAnswer
+					correctAnswer: action.payload.correctAnswer
 				}
 			};
+		case RESET_GAME:
+			return initialState;
 		default:
 			return state;
 	}
