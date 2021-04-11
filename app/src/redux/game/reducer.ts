@@ -4,7 +4,9 @@ import {
 	INITIALIZE_GAME,
 	UPDATE_QUESTION,
 	UPDATE_SCORE,
-	RESET_GAME
+	COMPLETE_GAME,
+	RESET_GAME,
+	SET_ROUND_LOADING
 } from './types';
 
 const initialState: GameState = {
@@ -14,7 +16,8 @@ const initialState: GameState = {
 	round: 0,
 	question: null,
 	score: 0,
-	result: null
+	result: null,
+	complete: false
 };
 
 const gameReducer = (state = initialState, action: GameActionTypes) => {
@@ -25,9 +28,12 @@ const gameReducer = (state = initialState, action: GameActionTypes) => {
 				gameId: action.payload.gameId,
 				playerId: action.payload.playerId
 			};
+		case SET_ROUND_LOADING:
+			return { ...state, loading: true };
 		case UPDATE_QUESTION:
 			return {
 				...state,
+				loading: false,
 				round: state.round + 1,
 				question: action.payload.question,
 				result: null
@@ -41,6 +47,8 @@ const gameReducer = (state = initialState, action: GameActionTypes) => {
 					correctAnswer: action.payload.correctAnswer
 				}
 			};
+		case COMPLETE_GAME:
+			return { ...state, complete: true };
 		case RESET_GAME:
 			return initialState;
 		default:

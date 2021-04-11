@@ -1,6 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { setNextQuestion } from '../../redux/game/actions';
 import { GameResult } from '../../redux/game/types';
+import { useAppSelector } from '../../redux/store';
 
 interface RoundStatusProps {
 	result: GameResult;
@@ -8,7 +11,14 @@ interface RoundStatusProps {
 
 const RoundStatus: React.FC<RoundStatusProps> = ({ result }) => {
 	const { isCorrect, correctAnswer } = result;
-	// Maybe useSubscription to get new score here?
+	const score = useAppSelector(({ game }) => game.score);
+	const dispatch = useDispatch();
+
+	React.useEffect(() => {
+		setTimeout(() => {
+			dispatch(setNextQuestion());
+		}, 3000);
+	}, []);
 
 	return (
 		<View
@@ -24,6 +34,8 @@ const RoundStatus: React.FC<RoundStatusProps> = ({ result }) => {
 					<Text>{correctAnswer}</Text>
 				</>
 			)}
+			<Text>Score:</Text>
+			<Text>{score}</Text>
 		</View>
 	);
 };

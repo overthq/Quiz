@@ -1,6 +1,8 @@
 export const INITIALIZE_GAME = 'game/INITIALIZE_GAME';
+export const SET_ROUND_LOADING = 'game/SET_ROUND_LOADING';
 export const UPDATE_QUESTION = 'game/UPDATE_QUESTION';
 export const UPDATE_SCORE = 'game/UPDATE_SCORE';
+export const COMPLETE_GAME = 'game/COMPLETE_GAME';
 export const RESET_GAME = 'game/RESET_GAME';
 
 export interface Question {
@@ -21,6 +23,7 @@ export interface GameState {
 	question: Question | null;
 	score: number;
 	result: GameResult | null;
+	complete: boolean;
 }
 
 interface InitializeGameAction {
@@ -29,6 +32,10 @@ interface InitializeGameAction {
 		gameId: string;
 		playerId: string;
 	};
+}
+
+interface SetRoundLoadingAction {
+	type: typeof SET_ROUND_LOADING;
 }
 
 interface UpdateQuestionAction {
@@ -48,12 +55,18 @@ interface UpdateScoreAction {
 	};
 }
 
+interface CompleteGameAction {
+	type: typeof COMPLETE_GAME;
+}
+
 interface ResetGameAction {
 	type: typeof RESET_GAME;
 }
 
 export type GameActionTypes =
 	| InitializeGameAction
+	| SetRoundLoadingAction
 	| UpdateQuestionAction
 	| UpdateScoreAction
+	| CompleteGameAction
 	| ResetGameAction;
