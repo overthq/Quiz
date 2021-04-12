@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { GraphQLClient } from 'graphql-request';
-import { ContractFactory } from 'ethers';
+import { ContractFactory, Contract } from 'ethers';
 import {
 	cacheQuestions,
 	checkAnswerCorrect,
@@ -9,6 +9,9 @@ import {
 import SETUP_GAME from './queries/SETUP_GAME';
 import CREATE_GAME from './queries/CREATE_GAME';
 import UPDATE_SCORE from './queries/UPDATE_SCORE';
+import COMPLETE_GAME from './queries/COMPLETE_GAME';
+import CHECK_WINNER from './queries/CHECK_WINNER';
+import CHECK_PLAYERS from './queries/CHECK_PLAYERS';
 
 import QuizArtifact from './abis/Quiz.json';
 
@@ -106,7 +109,53 @@ router.post('/answer/:gameId/:round', async (req, res) => {
 	}
 });
 
+// Note: This is very bad code to resolve the winner of a game.
+// It seems very likely to race conditions, and is too much computation to run for every user.
+// Really does not scale, but is only used to test that the game workflow works.
+
+router.post('/complete', async (req, res) => {
+	const { playerId } = req.body;
+
+	try {
+		const { update_players_by_pk } = await client.request(COMPLETE_GAME, {
+			playerId
+		});
+
+		const gameId = update_players_by_pk.game_id;
+
+		// TODO: What do we do if a user gets disconnected during the game?
+		// The following logic does not hold in that case,
+		// So it follows, that there is still some work to be done around that logic.
+
+		const { players: stillPlaying } = await client.request(CHECK_PLAYERS, {
+			gameId
+		});
+
+		if (stillPlaying.length === 0) {
+			const { players, games_by_pk } = await client.request(CHECK_WINNER, {
+				gameId
+			});
+			const { contract } = games_by_pk;
+
+			const quizContract = new Contract(contract, QuizArtifact.abi);
+
+			quizContract.payout(players[0].address);
+		}
+	} catch (error) {
+		return res.status(500).json({
+			success: false,
+			data: { message: error.message }
+		});
+	}
+});
+
 // How do we finalize that the game has ended?
 // We can call a function on app close, that ends the game for the given player, and resets the game state.
+// - Set a flag called 'completed' on player object.
+// - On completed setting, check if all other players have also completed the game.
+// - If yes, then check for the winner, and trigger the payout function.
+// - If no, pass.
+// - Only worry is a race condition where two players hit the endpoint at the same time, and the server returns false,
+// but it is in fact, a false positive (or true negative lol).
 
 export default router;

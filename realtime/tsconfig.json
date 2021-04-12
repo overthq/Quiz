@@ -1,0 +1,14 @@
+{
+	"compilerOptions": {
+		"allowJs": false,
+		"composite": true,
+		"outDir": "dist",
+		"rootDir": "src",
+		"skipLibCheck": true,
+		"module": "commonjs",
+		"target": "es5",
+		"esModuleInterop": true,
+		"resolveJsonModule": true
+	},
+	"include": ["src", "./src/**/*.json"]
+}
