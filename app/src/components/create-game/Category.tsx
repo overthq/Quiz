@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, FlatList, Pressable, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useFormikContext } from 'formik';
 import { fetchCategories } from '../../utils/quizApi';

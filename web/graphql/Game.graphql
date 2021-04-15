@@ -1,0 +1,13 @@
+mutation CreateGame($gameObject: games_insert_input!) {
+	insert_games_one(object: $gameObject) {
+		id
+	}
+}
+
+query Game($gameId: uuid!) {
+	games_by_pk(id: $gameId) {
+		id
+		creator
+		contract
+	}
+}

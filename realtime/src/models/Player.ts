@@ -1,9 +1,10 @@
 import { model, Schema, Document } from 'mongoose';
 
-interface PlayerType extends Document {
+export interface PlayerType extends Document {
 	gameId: string;
 	address: string;
 	nickname: string;
+	score: number;
 }
 
 const PlayerSchema = new Schema(
@@ -17,6 +18,10 @@ const PlayerSchema = new Schema(
 			type: String,
 			required: true,
 			unique: true
+		},
+		nickname: {
+			type: String,
+			required: true
 		},
 		score: {
 			type: Number,

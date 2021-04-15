@@ -1,21 +1,17 @@
 import React from 'react';
-import { View, StyleSheet, AppState } from 'react-native';
 import { useDispatch } from 'react-redux';
 import Progress from '../components/game/Progress';
-import CurrentQuestion from '../components/game/CurrentQuestion';
+import Question from '../components/game/Question';
 import LoadingRound from '../components/game/LoadingRound';
 import RoundStatus from '../components/game/RoundStatus';
 import Score from '../components/game/Score';
+import Leaderboard from '../components/game/Leaderboard';
 import { useAppSelector } from '../redux/store';
-import {
-	setNextQuestion,
-	answerQuestion,
-	completeGame
-} from '../redux/game/actions';
+import { setNextQuestion, answerQuestion } from '../redux/game/actions';
 
 const Game: React.FC = () => {
 	const dispatch = useDispatch();
-	const { loading, question, round, result } = useAppSelector(
+	const { loading, question, round, result, complete } = useAppSelector(
 		({ game }) => game
 	);
 	const [timeLeft, setTimeLeft] = React.useState(10);
@@ -41,14 +37,9 @@ const Game: React.FC = () => {
 
 	React.useEffect(() => {
 		dispatch(setNextQuestion());
-		AppState.addEventListener('change', nextAppState => {
-			if (nextAppState === 'background') {
-				dispatch(completeGame());
-			}
-		});
 	}, []);
 
-	// If complete, show the live leaderboard, with animations.
+	if (complete) return <Leaderboard />;
 
 	if (result) return <RoundStatus result={result} />;
 
@@ -56,25 +47,17 @@ const Game: React.FC = () => {
 
 	return (
 		question && (
-			<View style={styles.container}>
+			<div>
 				<Progress ended={!!option} />
 				<Score />
-				<CurrentQuestion
+				<Question
 					question={question}
 					setOption={setOption}
 					answered={!!option}
 				/>
-			</View>
+			</div>
 		)
 	);
 };
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		paddingHorizontal: 16,
-		paddingVertical: 8
-	}
-});
 
 export default Game;
