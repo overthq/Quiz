@@ -9,8 +9,8 @@ const io = new Server(server, {});
 
 io.on('connection', socket => {
 	socket.on('setup-game', async input => {
-		const game = await setupGame(input);
-		socket.emit('game-created', { game });
+		const data = await setupGame(input);
+		socket.emit('game-created', data);
 	});
 
 	socket.on('join-game', input => {
@@ -45,3 +45,4 @@ io.on('connection', socket => {
 });
 
 server.listen(Number(process.env.PORT));
+console.log('Server started at port', process.env.PORT);
