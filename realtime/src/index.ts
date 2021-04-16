@@ -3,6 +3,7 @@ import { Server } from 'socket.io';
 import { Player } from './models';
 import { setupGame, answerQuestion, finalizeGame } from './utils/game';
 import { getQuestion } from './utils/questions';
+import './config/database';
 
 const server = createServer();
 const io = new Server(server, {});

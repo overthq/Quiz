@@ -5,9 +5,6 @@ import { toWei } from 'web3-utils';
 import { setupGame } from '../utils/game';
 import { fetchCategories } from '../utils/quizApi';
 
-let ethereum: any;
-let web3: any;
-
 const CreateGame = () => {
 	const [categories, setCategories] = React.useState<
 		{ id: number; name: string }[]
@@ -35,7 +32,7 @@ const CreateGame = () => {
 					const { nickname, stake, category, rounds, difficulty } = values;
 					const stakeInWei = toWei(stake, 'ether');
 
-					const [account] = await ethereum.enable();
+					const [account] = await window.ethereum.enable();
 
 					const data = await setupGame({
 						address: account,
@@ -46,32 +43,32 @@ const CreateGame = () => {
 						stake: stakeInWei
 					});
 
-					await ethereum.sendAsync(
+					await window.ethereum.sendAsync(
 						{
 							method: 'eth_sendTransaction',
 							params: [
 								{
 									nonce: '0x00',
-									gasPrice: '0x09184e72a000',
-									gas: '0x2710',
+									gasPrice: '30000',
+									gas: '21000',
 									to: data.contract,
-									from: ethereum.selectedAddress,
-									value: stake,
+									from: window.ethereum.selectedAddress,
+									value: stakeInWei,
 									chainId: 3
 								}
-							],
-							from: account
+							]
 						},
 						(error, result) => {
 							if (error) console.error(error);
-							else console.log(result);
+							else {
+								console.log(result);
+								router.push({
+									pathname: '/lobby',
+									query: { gameId: data.gameId }
+								});
+							}
 						}
 					);
-
-					router.push({
-						pathname: '/lobby',
-						query: { gameId: data.insert_games_one.id }
-					});
 				}}
 			>
 				{({ setFieldValue }) => (
