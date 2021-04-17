@@ -53,7 +53,7 @@ const CreateGame = () => {
 									gas: '21000',
 									to: data.contract,
 									from: window.ethereum.selectedAddress,
-									value: stakeInWei,
+									value: parseInt(stakeInWei).toString(16),
 									chainId: 3
 								}
 							]
