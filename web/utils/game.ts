@@ -1,10 +1,10 @@
 interface SetupGamePayload {
 	nickname: string;
 	address: string;
-	stake: number;
+	stake: string;
 	difficulty?: 'easy' | 'medium' | 'hard';
 	category?: number;
-	rounds?: number;
+	rounds?: string;
 }
 
 export const setupGame = async (options: SetupGamePayload) => {

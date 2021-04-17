@@ -1,13 +1,7 @@
 import { Router } from 'express';
 import { GraphQLClient } from 'graphql-request';
 import 'cross-fetch/polyfill';
-import {
-	ContractFactory,
-	Contract,
-	Wallet,
-	getDefaultProvider
-	// utils
-} from 'ethers';
+import { ContractFactory, Contract, Wallet, getDefaultProvider } from 'ethers';
 import {
 	cacheQuestions,
 	checkAnswerCorrect,
@@ -23,13 +17,8 @@ import CHECK_PLAYERS from './queries/CHECK_PLAYERS';
 import QuizArtifact from './abis/Quiz.json';
 
 const router = Router();
-
-// const DEFAULT_PATH = `m/44'/60'/0'/0`;
 const provider = getDefaultProvider('http://localhost:7545'); // 'ropsten'
-// const hdnode = utils.HDNode.fromMnemonic(process.env.MNEMONIC);
-// const node = hdnode.derivePath(`${DEFAULT_PATH}/0`);
 const signer = new Wallet(process.env.PRIVATE_KEY as string, provider);
-
 const client = new GraphQLClient(process.env.HASURA_URL as string);
 
 router.post('/setup', async (req, res) => {
@@ -54,7 +43,7 @@ router.post('/setup', async (req, res) => {
 				difficulty,
 				rounds: Number(rounds)
 			}),
-			Quiz.deploy(Number(stake))
+			Quiz.deploy(stake)
 		]);
 
 		await quiz.deployed();

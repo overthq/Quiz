@@ -39,7 +39,7 @@ const CreateGame = () => {
 						category: Number(category),
 						difficulty,
 						nickname,
-						rounds: Number(rounds),
+						rounds,
 						stake: stakeInWei
 					});
 
