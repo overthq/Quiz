@@ -29,7 +29,7 @@ const Lobby = () => {
 		await createPlayer({
 			playerObject: {
 				game_id: gameId,
-				address: '',
+				address: accounts[0],
 				nickname: ''
 			}
 		});

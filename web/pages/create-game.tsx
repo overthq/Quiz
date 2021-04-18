@@ -2,8 +2,8 @@ import React from 'react';
 import { Formik, Form, Field } from 'formik';
 import { useRouter } from 'next/router';
 import { toWei } from 'web3-utils';
-import { setupGame } from '../utils/game';
 import { fetchCategories } from '../utils/quizApi';
+import { socket } from '../utils/socket';
 
 const CreateGame = () => {
 	const [categories, setCategories] = React.useState<
@@ -18,6 +18,37 @@ const CreateGame = () => {
 		})();
 	}, []);
 
+	React.useEffect(() => {
+		socket.on('game-created', data => {
+			window.ethereum.sendAsync(
+				{
+					method: 'eth_sendTransaction',
+					params: [
+						{
+							nonce: '0x00',
+							gasPrice: '30000',
+							gas: '21000',
+							to: data.contract,
+							from: window.ethereum.selectedAddress,
+							value: parseInt(data.stake).toString(16),
+							chainId: 3
+						}
+					]
+				},
+				(error, result) => {
+					if (error) console.error(error);
+					else {
+						console.log(result);
+						router.push({
+							pathname: '/lobby',
+							query: { gameId: data.gameId }
+						});
+					}
+				}
+			);
+		});
+	}, [socket]);
+
 	return (
 		<div>
 			<Formik
@@ -31,44 +62,16 @@ const CreateGame = () => {
 				onSubmit={async values => {
 					const { nickname, stake, category, rounds, difficulty } = values;
 					const stakeInWei = toWei(stake, 'ether');
-
 					const [account] = await window.ethereum.enable();
 
-					const data = await setupGame({
+					socket.emit('setup-game', {
 						address: account,
-						category: Number(category),
+						category,
 						difficulty,
 						nickname,
 						rounds,
 						stake: stakeInWei
 					});
-
-					await window.ethereum.sendAsync(
-						{
-							method: 'eth_sendTransaction',
-							params: [
-								{
-									nonce: '0x00',
-									gasPrice: '30000',
-									gas: '21000',
-									to: data.contract,
-									from: window.ethereum.selectedAddress,
-									value: parseInt(stakeInWei).toString(16),
-									chainId: 3
-								}
-							]
-						},
-						(error, result) => {
-							if (error) console.error(error);
-							else {
-								console.log(result);
-								router.push({
-									pathname: '/lobby',
-									query: { gameId: data.gameId }
-								});
-							}
-						}
-					);
 				}}
 			>
 				{({ setFieldValue }) => (

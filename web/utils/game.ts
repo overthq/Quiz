@@ -118,3 +118,15 @@ export const sendAnswer = async ({
 	const data = await response.json();
 	return data;
 };
+
+export const getPlayers = async (gameId: string) => {
+	const response = await fetch(`http://localhost:5050/${gameId}/players`, {
+		method: 'GET',
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json'
+		}
+	});
+	const { data } = await response.json();
+	return data;
+};

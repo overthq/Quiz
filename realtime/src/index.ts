@@ -1,24 +1,40 @@
+import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import cors from 'cors';
+import 'cross-fetch/polyfill';
 import { Player } from './models';
+import routes from './routes';
 import { setupGame, answerQuestion, finalizeGame } from './utils/game';
 import { getQuestion } from './utils/questions';
 import './config/database';
 
-const server = createServer();
-const io = new Server(server, {});
+const app = express();
+const server = createServer(app);
+const io = new Server(server, {
+	cors: {
+		origin: 'http://localhost:3000',
+		methods: ['GET', 'POST']
+	}
+});
+
+app.use(express.json());
+app.use(cors());
+app.use(routes);
+
+// Learnt a lot from: https://github.com/ericterpstra/anagrammatix/blob/900f8ce5e1e0851e0fee89fa514642cfd71d147b/agxgame.js
 
 io.on('connection', socket => {
 	socket.on('setup-game', async input => {
 		const data = await setupGame(input);
+		socket.join([data.playerId, data.gameId]);
 		socket.emit('game-created', data);
 	});
 
 	socket.on('join-game', input => {
 		const player = new Player(input);
-		const rooms = [player.id, input.gameId];
-		socket.join(rooms);
-		socket.emit('game-joined', { player });
+		socket.join([player.id, input.gameId]);
+		socket.to(input.gameId).emit('game-joined', { player });
 	});
 
 	socket.on('start-game', async input => {
@@ -45,5 +61,6 @@ io.on('connection', socket => {
 	});
 });
 
-server.listen(Number(process.env.PORT));
-console.log('Server started at port', process.env.PORT);
+server.listen(Number(process.env.PORT), () => {
+	console.log('Server started at port', process.env.PORT);
+});

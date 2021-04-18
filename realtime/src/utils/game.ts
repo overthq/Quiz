@@ -1,19 +1,10 @@
-import {
-	ContractFactory,
-	Contract,
-	getDefaultProvider,
-	utils,
-	Wallet
-} from 'ethers';
+import { ContractFactory, Contract, getDefaultProvider, Wallet } from 'ethers';
 import { cacheQuestions, checkAnswerCorrect } from '../utils/questions';
 import { Game, Player } from '../models';
 import QuizArtifact from '../abis/Quiz.json';
 
-const DEFAULT_PATH = `m/44'/60'/0'/0`;
 const provider = getDefaultProvider('http://localhost:7545'); // 'ropsten'
-const hdnode = utils.HDNode.fromMnemonic(process.env.MNEMONIC);
-const node = hdnode.derivePath(`${DEFAULT_PATH}/0`);
-const signer = new Wallet(node.privateKey, provider);
+const signer = new Wallet(process.env.PRIVATE_KEY as string, provider);
 
 interface SetupGamePayload {
 	nickname: string;
@@ -28,7 +19,7 @@ export const setupGame = async (payload: SetupGamePayload) => {
 	const { nickname, address, stake, category, difficulty, rounds } = payload;
 
 	try {
-		const game = new Game({ creator: address });
+		const game = new Game({ host: address });
 
 		const Quiz = new ContractFactory(
 			QuizArtifact.abi,
@@ -55,7 +46,9 @@ export const setupGame = async (payload: SetupGamePayload) => {
 
 		return {
 			gameId: game.id,
-			contract: quiz.address
+			playerId: player.id,
+			contract: quiz.address,
+			stake
 		};
 	} catch (error) {
 		console.error(error);

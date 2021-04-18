@@ -1,6 +1,4 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { setNextQuestion } from '../../redux/game/actions';
 import { GameResult } from '../../redux/game/types';
 import { useAppSelector } from '../../redux/store';
 
@@ -11,18 +9,6 @@ interface RoundStatusProps {
 const RoundStatus: React.FC<RoundStatusProps> = ({ result }) => {
 	const { isCorrect, correctAnswer } = result;
 	const score = useAppSelector(({ game }) => game.score);
-	const dispatch = useDispatch();
-
-	React.useEffect(() => {
-		setTimeout(() => {
-			dispatch(setNextQuestion());
-		}, 3000);
-	}, []);
-
-	// style={[
-	// 	styles.container,
-	// 	{ backgroundColor: isCorrect ? 'green' : 'red' }
-	// ]}
 
 	return (
 		<div>
@@ -35,6 +21,7 @@ const RoundStatus: React.FC<RoundStatusProps> = ({ result }) => {
 			)}
 			<p>Score:</p>
 			<p>{score}</p>
+			<p>Waiting for next round...</p>
 		</div>
 	);
 };

@@ -1,16 +1,26 @@
 import React from 'react';
 
-const Leaderboard = () => {
-	// TODO: Create a subscription to be used to load all the users and update when their score changes.
+interface Player {
+	id: string;
+	nickname: string;
+	address: string;
+	score: number;
+}
 
-	// Check if everyone has completed, if yes display the winner clearly.
-	// If the winner is the viewer, display congratulations message,
-	// And let them know that the winnings have been transferred to their crypto wallet.
+interface LeaderboardProps {
+	data: Player[];
+}
 
+const Leaderboard: React.FC<LeaderboardProps> = ({ data }) => {
 	return (
 		<div>
 			<p>Leaderboard</p>
-			{}
+			{data.map(player => (
+				<div key={player.id}>
+					<p>{player.nickname}</p>
+					<p>{player.score}</p>
+				</div>
+			))}
 		</div>
 	);
 };

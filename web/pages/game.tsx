@@ -7,27 +7,37 @@ import RoundStatus from '../components/game/RoundStatus';
 import Score from '../components/game/Score';
 import Leaderboard from '../components/game/Leaderboard';
 import { useAppSelector } from '../redux/store';
-import { setNextQuestion, answerQuestion } from '../redux/game/actions';
+import { setNextQuestion, questionAnswered } from '../redux/game/actions';
+import { socket } from '../utils/socket';
+import TimeUp from '../components/game/TimeUp';
 
 const Game: React.FC = () => {
 	const dispatch = useDispatch();
-	const { loading, question, round, result, complete } = useAppSelector(
+	const { loading, question, round, result } = useAppSelector(
 		({ game }) => game
 	);
 	const [timeLeft, setTimeLeft] = React.useState(10);
 	const [option, setOption] = React.useState('');
+	const [leaderboard, setLeaderboard] = React.useState([]);
 
 	React.useEffect(() => {
-		if (timeLeft === 0) {
-			dispatch(answerQuestion(option));
-		}
-	}, [timeLeft]);
+		socket.on('question', question => {
+			setTimeLeft(10);
+			dispatch(setNextQuestion(question));
+		});
+
+		socket.on('question-answered', payload => {
+			dispatch(questionAnswered(payload));
+		});
+
+		socket.on('leaderboard', payload => {
+			setLeaderboard(payload);
+		});
+	}, [socket]);
 
 	React.useEffect(() => {
 		const timeout = setTimeout(() => {
-			if (timeLeft > 0) {
-				setTimeLeft(timeLeft - 1);
-			}
+			if (timeLeft > 0) setTimeLeft(timeLeft - 1);
 		}, 1000);
 
 		return () => {
@@ -35,11 +45,9 @@ const Game: React.FC = () => {
 		};
 	});
 
-	React.useEffect(() => {
-		dispatch(setNextQuestion());
-	}, []);
+	if (leaderboard.length > 0) return <Leaderboard data={leaderboard} />;
 
-	if (complete) return <Leaderboard />;
+	if (timeLeft === 0) return <TimeUp />;
 
 	if (result) return <RoundStatus result={result} />;
 
