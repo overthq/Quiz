@@ -27,13 +27,13 @@ app.use(routes);
 io.on('connection', socket => {
 	socket.on('setup-game', async input => {
 		const data = await setupGame(input);
-		socket.join([data.playerId, data.gameId]);
-		socket.emit('game-created', data);
+		await socket.join([data.playerId, data.gameId]);
+		socket.to(data.gameId).emit('game-created', data);
 	});
 
-	socket.on('join-game', input => {
+	socket.on('join-game', async input => {
 		const player = new Player(input);
-		socket.join([player.id, input.gameId]);
+		await socket.join([player.id, input.gameId]);
 		socket.to(input.gameId).emit('game-joined', { player });
 	});
 

@@ -52,20 +52,32 @@ const Lobby = () => {
 				if (error) console.error(error);
 				else {
 					console.log(result);
+					socket.emit('join-game', {
+						nickname,
+						address: window.ethereum.selectedAddress,
+						gameId
+					});
 				}
 			}
 		);
+	};
 
-		socket.emit('join-game', {
-			nickname,
-			address: window.ethereum.selectedAddress,
-			gameId
+	const startGame: React.MouseEventHandler<HTMLButtonElement> = async e => {
+		e.preventDefault();
+		socket.emit('start-game', {
+			gameId,
+			rounds: 10
 		});
 	};
 
 	React.useEffect(() => {
 		socket.on('game-joined', ({ player }) => {
 			setPlayers([...players, player]);
+		});
+
+		socket.on('game-started', () => {
+			// Dispatch action to initialize game with the information at hand.
+			router.push('/game');
 		});
 	}, [socket]);
 
@@ -83,7 +95,7 @@ const Lobby = () => {
 							))}
 						</div>
 						{isHost ? (
-							<button>Start game</button>
+							<button onClick={startGame}>Start game</button>
 						) : (
 							<p>Waiting for game to start...</p>
 						)}
