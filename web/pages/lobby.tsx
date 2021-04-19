@@ -9,9 +9,14 @@ const Lobby = () => {
 	const [players, setPlayers] = React.useState([]);
 	const { gameId } = router.query;
 
+	const isHost = React.useMemo(
+		() => players[0]?.address === window.ethereum.selectedAddress,
+		[players]
+	);
+
 	const joined = React.useMemo(
 		() => players.map(p => p.address).includes(window.ethereum.selectedAddress),
-		[]
+		[players]
 	);
 
 	React.useEffect(() => {
@@ -19,14 +24,39 @@ const Lobby = () => {
 			if (gameId) {
 				const data = await getPlayers(gameId as string);
 				setPlayers(data.players);
-			} else {
-				router.push('/');
 			}
 		})();
-	}, []);
+	}, [gameId]);
 
 	const handleJoinGame = async () => {
 		await window.ethereum.enable();
+
+		// const { contract, stake } = await getGameMetadata(gameId);
+		// Maybe not storing the stake in the database wasn't such a smart idea.
+		// Also, how did I plan to get the details of the contract here?
+
+		window.ethereum.sendAsync(
+			{
+				method: 'eth_sendTransaction',
+				params: [
+					{
+						nonce: '0x00',
+						gasPrice: '30000',
+						gas: '21000',
+						to: data.contract,
+						from: window.ethereum.selectedAddress,
+						value: parseInt(stake).toString(16),
+						chainId: 3
+					}
+				]
+			},
+			(error, result) => {
+				if (error) console.error(error);
+				else {
+					console.log(result);
+				}
+			}
+		);
 
 		socket.emit('join-game', {
 			nickname,
@@ -36,8 +66,8 @@ const Lobby = () => {
 	};
 
 	React.useEffect(() => {
-		socket.on('game-joined', ({ players }) => {
-			setPlayers(players);
+		socket.on('game-joined', ({ player }) => {
+			setPlayers([...players, player]);
 		});
 	}, [socket]);
 
@@ -54,7 +84,11 @@ const Lobby = () => {
 								</div>
 							))}
 						</div>
-						<p>Waiting for game to start...</p>
+						{isHost ? (
+							<button>Start game</button>
+						) : (
+							<p>Waiting for game to start...</p>
+						)}
 					</>
 				) : (
 					<form onSubmit={handleJoinGame}>
