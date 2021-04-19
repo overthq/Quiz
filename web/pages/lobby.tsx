@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import { getPlayers } from '../utils/game';
+import { getGameDetails, getPlayers } from '../utils/game';
 import { socket } from '../utils/socket';
 
 const Lobby = () => {
@@ -31,9 +31,7 @@ const Lobby = () => {
 	const handleJoinGame = async () => {
 		await window.ethereum.enable();
 
-		// const { contract, stake } = await getGameMetadata(gameId);
-		// Maybe not storing the stake in the database wasn't such a smart idea.
-		// Also, how did I plan to get the details of the contract here?
+		const { contract, stake } = await getGameDetails(gameId as string);
 
 		window.ethereum.sendAsync(
 			{
@@ -43,7 +41,7 @@ const Lobby = () => {
 						nonce: '0x00',
 						gasPrice: '30000',
 						gas: '21000',
-						to: data.contract,
+						to: contract,
 						from: window.ethereum.selectedAddress,
 						value: parseInt(stake).toString(16),
 						chainId: 3

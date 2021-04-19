@@ -19,7 +19,7 @@ export const setupGame = async (payload: SetupGamePayload) => {
 	const { nickname, address, stake, category, difficulty, rounds } = payload;
 
 	try {
-		const game = new Game({ host: address });
+		const game = new Game({ host: address, stake });
 
 		const Quiz = new ContractFactory(
 			QuizArtifact.abi,

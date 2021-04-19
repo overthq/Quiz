@@ -2,7 +2,8 @@ import { model, Schema, Document } from 'mongoose';
 
 interface GameType extends Document {
 	address: string;
-	contract?: string;
+	contract: string;
+	stake: string;
 }
 
 const GameSchema = new Schema(
@@ -15,6 +16,10 @@ const GameSchema = new Schema(
 		contract: {
 			type: String,
 			unique: true
+		},
+		stake: {
+			type: String,
+			required: true
 		}
 	},
 	{ timestamps: true }
