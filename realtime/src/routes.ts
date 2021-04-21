@@ -7,7 +7,7 @@ router.get('/:gameId/players', async (req, res) => {
 	const { gameId } = req.params;
 
 	try {
-		const players = await Player.find({ gameId }).sort({ createdAt: 'desc' });
+		const players = await Player.find({ gameId }).sort({ createdAt: 'asc' });
 		return res.status(200).json({
 			success: true,
 			data: { players }

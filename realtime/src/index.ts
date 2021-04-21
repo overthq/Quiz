@@ -28,11 +28,12 @@ io.on('connection', socket => {
 	socket.on('setup-game', async input => {
 		const data = await setupGame(input);
 		await socket.join([data.playerId, data.gameId]);
-		socket.to(data.gameId).emit('game-created', data);
+		socket.emit('game-created', data);
 	});
 
 	socket.on('join-game', async input => {
 		const player = new Player(input);
+		await player.save();
 		await socket.join([player.id, input.gameId]);
 		socket.to(input.gameId).emit('game-joined', { player });
 	});

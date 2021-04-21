@@ -1,18 +1,13 @@
 import React from 'react';
 import type { AppProps } from 'next/app';
 import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
-import { persistor, store } from '../redux/store';
+import { store } from '../redux/store';
 import '../styles/globals.css';
 
-function MyApp({ Component, pageProps }: AppProps) {
-	return (
-		<Provider store={store}>
-			<PersistGate persistor={persistor}>
-				<Component {...pageProps} />
-			</PersistGate>
-		</Provider>
-	);
-}
+const App: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => (
+	<Provider store={store}>
+		<Component {...pageProps} />
+	</Provider>
+);
 
-export default MyApp;
+export default App;

@@ -1,9 +1,9 @@
 import React from 'react';
 import QuestionOption from './QuestionOption';
-import { Question } from '../../redux/game/types';
+import { Question as QuestionType } from '../../redux/game/types';
 
 interface QuestionProps {
-	question: Question;
+	question: QuestionType;
 	setOption(option: string): void;
 	answered: boolean;
 }

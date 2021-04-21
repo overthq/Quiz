@@ -1,12 +1,12 @@
 import React from 'react';
-import { usePlayerScoreSubscription } from '../../types/api';
+import { useAppSelector } from '../../redux/store';
 
 const Score = () => {
-	const [data] = usePlayerScoreSubscription();
+	const score = useAppSelector(({ game }) => game.score);
 
 	return (
 		<div>
-			<p>Score: {data.score}</p>
+			<p>Score: {score}</p>
 		</div>
 	);
 };

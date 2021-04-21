@@ -36,14 +36,18 @@ const Game: React.FC = () => {
 	}, [socket]);
 
 	React.useEffect(() => {
-		const timeout = setTimeout(() => {
-			if (timeLeft > 0) setTimeLeft(timeLeft - 1);
+		const interval = setInterval(() => {
+			if (timeLeft > 0) {
+				setTimeLeft(timeLeft - 1);
+			} else {
+				clearInterval(interval);
+			}
 		}, 1000);
 
 		return () => {
-			clearTimeout(timeout);
+			clearInterval(interval);
 		};
-	});
+	}, []);
 
 	if (leaderboard.length > 0) return <Leaderboard data={leaderboard} />;
 

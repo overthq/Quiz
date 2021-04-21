@@ -28,7 +28,8 @@ const Lobby = () => {
 		})();
 	}, [gameId]);
 
-	const handleJoinGame = async () => {
+	const handleJoinGame: React.MouseEventHandler<HTMLButtonElement> = async e => {
+		e.preventDefault();
 		await window.ethereum.enable();
 
 		const { contract, stake } = await getGameDetails(gameId as string);
@@ -68,6 +69,7 @@ const Lobby = () => {
 			gameId,
 			rounds: 10
 		});
+		router.push('/game');
 	};
 
 	React.useEffect(() => {
@@ -89,7 +91,7 @@ const Lobby = () => {
 						<div>
 							<h1>Lobby</h1>
 							{players.map(player => (
-								<div key={player.id}>
+								<div key={player._id}>
 									<p>{player.nickname}</p>
 								</div>
 							))}
@@ -101,14 +103,14 @@ const Lobby = () => {
 						)}
 					</>
 				) : (
-					<form onSubmit={handleJoinGame}>
+					<div>
 						<input
 							name='nickname'
 							placeholder='Your nickname'
 							onChange={e => setNickname(e.target.value)}
 						/>
-						<button type='submit'>Join game</button>
-					</form>
+						<button onClick={handleJoinGame}>Join game</button>
+					</div>
 				)}
 			</div>
 		</div>
