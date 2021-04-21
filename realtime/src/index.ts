@@ -41,19 +41,22 @@ io.on('connection', socket => {
 	socket.on('start-game', async input => {
 		// Make sure the user is "authenticated", and is the creator of the game.
 		const { gameId, rounds } = input;
-		let i = 1;
-		const interval = setInterval(async () => {
-			const question = await getQuestion({ gameId, round: i });
-			socket.to(gameId).emit('question', question);
 
-			if (i === rounds) clearInterval(interval);
-			i++;
-		}, 15000);
+		setTimeout(() => {
+			let i = 1;
+			const interval = setInterval(async () => {
+				const question = await getQuestion({ gameId, round: i });
+				socket.to(gameId).emit('question', question);
 
-		setTimeout(async () => {
-			const { leaderboard } = await finalizeGame(gameId);
-			socket.to(gameId).emit('leaderboard', leaderboard);
-		}, 17500);
+				if (i === rounds) clearInterval(interval);
+				i++;
+			}, 15000);
+
+			setTimeout(async () => {
+				const { leaderboard } = await finalizeGame(gameId);
+				socket.to(gameId).emit('leaderboard', leaderboard);
+			}, 17500);
+		}, 10000);
 	});
 
 	socket.on('answer-question', async input => {

@@ -1,26 +1,25 @@
 import React from 'react';
-import { GameResult } from '../../redux/game/types';
+import { GameContext } from '../../contexts/GameContext';
 import { useAppSelector } from '../../redux/store';
 
-interface RoundStatusProps {
-	result: GameResult;
-}
+const headers = { correct: 'Correct!', wrong: 'Wrong!', 'time-up': 'Time Up!' };
 
-const RoundStatus: React.FC<RoundStatusProps> = ({ result }) => {
-	const { isCorrect, correctAnswer } = result;
+const RoundStatus: React.FC = () => {
+	const { state } = React.useContext(GameContext);
 	const score = useAppSelector(({ game }) => game.score);
+
+	if (!state.status) throw new Error('Should not be!');
 
 	return (
 		<div>
-			<p>{isCorrect ? 'Correct!' : 'Wrong!'}</p>
-			{!isCorrect && (
+			<h3>{headers[state.status.kind]}</h3>
+			{state.status.kind === 'wrong' && (
 				<>
 					<p>The correct answer was:</p>
-					<p>{correctAnswer}</p>
+					<p>{state.status.correctAnswer}</p>
 				</>
 			)}
-			<p>Score:</p>
-			<p>{score}</p>
+			<p>Score: {score}</p>
 			<p>Waiting for next round...</p>
 		</div>
 	);

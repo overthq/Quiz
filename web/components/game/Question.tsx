@@ -1,18 +1,28 @@
 import React from 'react';
 import QuestionOption from './QuestionOption';
 import { Question as QuestionType } from '../../redux/game/types';
+import { socket } from '../../utils/socket';
+import { GameContext } from '../../contexts/GameContext';
 
 interface QuestionProps {
 	question: QuestionType;
-	setOption(option: string): void;
-	answered: boolean;
 }
 
-const Question: React.FC<QuestionProps> = ({
-	question,
-	setOption,
-	answered
-}) => {
+const Question: React.FC<QuestionProps> = ({ question }) => {
+	const [answered, setAnswered] = React.useState(false);
+	const { state } = React.useContext(GameContext);
+
+	const handleSelect = async (option: string) => {
+		socket.emit('answer-question', {
+			gameId: state.gameId,
+			playerId: state.playerId,
+			round: state.round,
+			option,
+			timeLeft: state.timeLeft
+		});
+		setAnswered(true);
+	};
+
 	return (
 		<div>
 			<h3>{question.question}</h3>
@@ -20,7 +30,7 @@ const Question: React.FC<QuestionProps> = ({
 				<QuestionOption
 					key={option}
 					text={option}
-					onSelect={setOption}
+					onSelect={handleSelect}
 					disabled={answered}
 				/>
 			))}

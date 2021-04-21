@@ -2,12 +2,14 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import { getGameDetails, getPlayers } from '../utils/game';
 import { socket } from '../utils/socket';
+import { GameContext } from '../contexts/GameContext';
 
 const Lobby = () => {
 	const router = useRouter();
 	const [nickname, setNickname] = React.useState('');
 	const [players, setPlayers] = React.useState([]);
 	const { gameId } = router.query;
+	const { dispatch } = React.useContext(GameContext);
 
 	const isHost = React.useMemo(
 		() => players[0]?.address === window.ethereum.selectedAddress,
@@ -63,12 +65,26 @@ const Lobby = () => {
 		);
 	};
 
+	const initGame = () => {
+		const playerId = players.find(
+			p => p.address === window.ethereum.selectedAddress
+		);
+
+		if (playerId) {
+			dispatch({ gameId: gameId as string, playerId } as any);
+		} else {
+			throw new Error('Impostor found');
+		}
+	};
+
 	const startGame: React.MouseEventHandler<HTMLButtonElement> = async e => {
 		e.preventDefault();
 		socket.emit('start-game', {
 			gameId,
 			rounds: 10
 		});
+
+		initGame();
 		router.push('/game');
 	};
 
@@ -79,6 +95,7 @@ const Lobby = () => {
 
 		socket.on('game-started', () => {
 			// Dispatch action to initialize game with the information at hand.
+			initGame();
 			router.push('/game');
 		});
 	}, [socket]);

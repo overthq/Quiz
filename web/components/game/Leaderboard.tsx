@@ -1,22 +1,14 @@
 import React from 'react';
+import { GameContext } from '../../contexts/GameContext';
 
-interface Player {
-	id: string;
-	nickname: string;
-	address: string;
-	score: number;
-}
+const Leaderboard: React.FC = () => {
+	const { state } = React.useContext(GameContext);
 
-interface LeaderboardProps {
-	data: Player[];
-}
-
-const Leaderboard: React.FC<LeaderboardProps> = ({ data }) => {
 	return (
 		<div>
 			<p>Leaderboard</p>
-			{data.map(player => (
-				<div key={player.id}>
+			{state.leaderboard.map(player => (
+				<div key={player._id}>
 					<p>{player.nickname}</p>
 					<p>{player.score}</p>
 				</div>
