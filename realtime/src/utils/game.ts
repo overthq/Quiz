@@ -103,6 +103,7 @@ export const finalizeGame = async ({ gameId }: FinalizeGamePayload) => {
 	const [winner] = leaderboard;
 	const quizContract = new Contract(game.contract, QuizArtifact.abi);
 
+	// await delAsync(gameId);
 	await quizContract.payout(winner.address);
 
 	return { leaderboard };
