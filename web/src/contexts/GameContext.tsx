@@ -1,9 +1,10 @@
 import React from 'react';
 import { socket } from '../utils/socket';
 
-interface Player {
+export interface Player {
 	_id: string;
 	nickname: string;
+	address: string;
 	score: number;
 }
 
@@ -48,16 +49,19 @@ export const GameContext = React.createContext<{
 });
 
 export const GameProvider: React.FC = ({ children }) => {
-	const [state, dispatch] = React.useReducer((p, n) => ({ ...p, ...n }), {
-		gameId: undefined,
-		playerId: undefined,
-		score: undefined,
-		leaderboard: undefined,
-		status: undefined,
-		question: undefined,
-		round: undefined,
-		timeLeft: 10
-	});
+	const [state, dispatch] = React.useReducer(
+		(p: any, n: any) => ({ ...p, ...n }),
+		{
+			gameId: undefined,
+			playerId: undefined,
+			score: undefined,
+			leaderboard: undefined,
+			status: undefined,
+			question: undefined,
+			round: undefined,
+			timeLeft: 10
+		}
+	);
 
 	React.useEffect(() => {
 		socket.on('question', payload => {
@@ -81,7 +85,7 @@ export const GameProvider: React.FC = ({ children }) => {
 		socket.on('leaderboard', leaderboard => {
 			dispatch({ leaderboard });
 		});
-	}, [socket]);
+	}, []);
 
 	React.useEffect(() => {
 		const interval = setInterval(() => {

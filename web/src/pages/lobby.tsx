@@ -1,23 +1,26 @@
 import React from 'react';
-import { useRouter } from 'next/router';
 import { getGameDetails, getPlayers } from '../utils/game';
 import { socket } from '../utils/socket';
-import { GameContext } from '../contexts/GameContext';
+import { GameContext, Player } from '../contexts/GameContext';
+import { useHistory, useParams } from 'react-router';
 
 const Lobby = () => {
-	const router = useRouter();
+	const history = useHistory();
 	const [nickname, setNickname] = React.useState('');
-	const [players, setPlayers] = React.useState([]);
-	const { gameId } = router.query;
+	const [players, setPlayers] = React.useState<Player[]>([]);
+	const { gameId } = useParams<{ gameId: string }>();
 	const { dispatch } = React.useContext(GameContext);
 
 	const isHost = React.useMemo(
-		() => players[0]?.address === window.ethereum.selectedAddress,
+		() => players[0]?.address === (window as any).ethereum.selectedAddress,
 		[players]
 	);
 
 	const joined = React.useMemo(
-		() => players.map(p => p.address).includes(window.ethereum.selectedAddress),
+		() =>
+			players
+				.map(p => p.address)
+				.includes((window as any).ethereum.selectedAddress),
 		[players]
 	);
 
@@ -32,11 +35,11 @@ const Lobby = () => {
 
 	const handleJoinGame: React.MouseEventHandler<HTMLButtonElement> = async e => {
 		e.preventDefault();
-		await window.ethereum.enable();
+		await (window as any).ethereum.enable();
 
 		const { contract, stake } = await getGameDetails(gameId as string);
 
-		window.ethereum.sendAsync(
+		(window as any).ethereum.sendAsync(
 			{
 				method: 'eth_sendTransaction',
 				params: [
@@ -45,19 +48,19 @@ const Lobby = () => {
 						gasPrice: '30000',
 						gas: '21000',
 						to: contract,
-						from: window.ethereum.selectedAddress,
+						from: (window as any).ethereum.selectedAddress,
 						value: parseInt(stake).toString(16),
 						chainId: 3
 					}
 				]
 			},
-			(error, result) => {
+			(error: any, result: any) => {
 				if (error) console.error(error);
 				else {
 					console.log(result);
 					socket.emit('join-game', {
 						nickname,
-						address: window.ethereum.selectedAddress,
+						address: (window as any).ethereum.selectedAddress,
 						gameId
 					});
 				}
@@ -65,9 +68,9 @@ const Lobby = () => {
 		);
 	};
 
-	const initGame = () => {
+	const initGame = React.useCallback(() => {
 		const playerId = players.find(
-			p => p.address === window.ethereum.selectedAddress
+			p => p.address === (window as any).ethereum.selectedAddress
 		);
 
 		if (playerId) {
@@ -75,7 +78,7 @@ const Lobby = () => {
 		} else {
 			throw new Error('Impostor found');
 		}
-	};
+	}, [dispatch, gameId, players]);
 
 	const startGame: React.MouseEventHandler<HTMLButtonElement> = async e => {
 		e.preventDefault();
@@ -85,7 +88,7 @@ const Lobby = () => {
 		});
 
 		initGame();
-		router.push('/game');
+		history.push('/game');
 	};
 
 	React.useEffect(() => {
@@ -96,9 +99,9 @@ const Lobby = () => {
 		socket.on('game-started', () => {
 			// Dispatch action to initialize game with the information at hand.
 			initGame();
-			router.push('/game');
+			history.push('/game');
 		});
-	}, [socket]);
+	}, [history, initGame, players]);
 
 	return (
 		<div>

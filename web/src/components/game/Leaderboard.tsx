@@ -7,7 +7,7 @@ const Leaderboard: React.FC = () => {
 	return (
 		<div>
 			<p>Leaderboard</p>
-			{state.leaderboard.map(player => (
+			{state.leaderboard?.map(player => (
 				<div key={player._id}>
 					<p>{player.nickname}</p>
 					<p>{player.score}</p>

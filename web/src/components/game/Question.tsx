@@ -1,8 +1,12 @@
 import React from 'react';
 import QuestionOption from './QuestionOption';
-import { Question as QuestionType } from '../../redux/game/types';
 import { socket } from '../../utils/socket';
 import { GameContext } from '../../contexts/GameContext';
+
+interface QuestionType {
+	question: string;
+	options: string[];
+}
 
 interface QuestionProps {
 	question: QuestionType;

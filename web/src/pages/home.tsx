@@ -1,12 +1,12 @@
 import React from 'react';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
 	return (
 		<div>
 			<h1>Welcome to Quiz!</h1>
-			<Link href='/create-game'>Create game</Link>
-			<Link href='/join-game'>Join game</Link>
+			<Link to='/create-game'>Create game</Link>
+			<Link to='/join-game'>Join game</Link>
 		</div>
 	);
 };

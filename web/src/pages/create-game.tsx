@@ -1,15 +1,15 @@
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
-import { useRouter } from 'next/router';
 import { toWei } from 'web3-utils';
 import { fetchCategories } from '../utils/quizApi';
 import { socket } from '../utils/socket';
+import { useHistory } from 'react-router-dom';
 
 const CreateGame = () => {
 	const [categories, setCategories] = React.useState<
 		{ id: number; name: string }[]
 	>([]);
-	const router = useRouter();
+	const history = useHistory();
 
 	React.useEffect(() => {
 		(async () => {
@@ -20,7 +20,7 @@ const CreateGame = () => {
 
 	React.useEffect(() => {
 		socket.on('game-created', data => {
-			window.ethereum.sendAsync(
+			(window as any).ethereum.sendAsync(
 				{
 					method: 'eth_sendTransaction',
 					params: [
@@ -29,25 +29,22 @@ const CreateGame = () => {
 							gasPrice: '30000',
 							gas: '21000',
 							to: data.contract,
-							from: window.ethereum.selectedAddress,
+							from: (window as any).ethereum.selectedAddress,
 							value: parseInt(data.stake).toString(16),
 							chainId: 3
 						}
 					]
 				},
-				(error, result) => {
+				(error: any, result: any) => {
 					if (error) console.error(error);
 					else {
 						console.log(result);
-						router.push({
-							pathname: '/lobby',
-							query: { gameId: data.gameId }
-						});
+						history.push(`/lobby?gameId${data.gameId}`);
 					}
 				}
 			);
 		});
-	}, [socket]);
+	}, [history]);
 
 	return (
 		<div>
@@ -62,7 +59,7 @@ const CreateGame = () => {
 				onSubmit={async values => {
 					const { nickname, stake, category, rounds, difficulty } = values;
 					const stakeInWei = toWei(stake, 'ether');
-					const [account] = await window.ethereum.enable();
+					const [account] = await (window as any).ethereum.enable();
 
 					socket.emit('setup-game', {
 						address: account,
