@@ -24,14 +24,14 @@ const Lobby = () => {
 		[players]
 	);
 
-	React.useEffect(() => {
-		(async () => {
-			if (gameId) {
-				const data = await getPlayers(gameId as string);
-				setPlayers(data.players);
-			}
-		})();
+	const fetchPlayers = React.useCallback(async () => {
+		const data = await getPlayers(gameId);
+		setPlayers(data.players);
 	}, [gameId]);
+
+	React.useEffect(() => {
+		fetchPlayers();
+	}, []);
 
 	const handleJoinGame: React.MouseEventHandler<HTMLButtonElement> = async e => {
 		e.preventDefault();
@@ -63,6 +63,8 @@ const Lobby = () => {
 						address: (window as any).ethereum.selectedAddress,
 						gameId
 					});
+					// Maybe wait a couple of seconds?
+					fetchPlayers();
 				}
 			}
 		);
@@ -74,11 +76,12 @@ const Lobby = () => {
 		);
 
 		if (playerId) {
-			dispatch({ gameId: gameId as string, playerId } as any);
+			dispatch({ gameId, playerId } as any);
+			history.push('/game');
 		} else {
 			throw new Error('Impostor found');
 		}
-	}, [dispatch, gameId, players]);
+	}, [dispatch, gameId, players, history]);
 
 	const startGame: React.MouseEventHandler<HTMLButtonElement> = async e => {
 		e.preventDefault();
@@ -86,9 +89,7 @@ const Lobby = () => {
 			gameId,
 			rounds: 10
 		});
-
-		initGame();
-		history.push('/game');
+		// initGame();
 	};
 
 	React.useEffect(() => {
@@ -97,9 +98,7 @@ const Lobby = () => {
 		});
 
 		socket.on('game-started', () => {
-			// Dispatch action to initialize game with the information at hand.
 			initGame();
-			history.push('/game');
 		});
 	}, [history, initGame, players]);
 

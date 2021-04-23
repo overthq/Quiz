@@ -35,11 +35,10 @@ const CreateGame = () => {
 						}
 					]
 				},
-				(error: any, result: any) => {
+				(error: Error) => {
 					if (error) console.error(error);
 					else {
-						console.log(result);
-						history.push(`/lobby?gameId${data.gameId}`);
+						history.push(`/lobby/${data.gameId}`);
 					}
 				}
 			);

@@ -14,7 +14,7 @@ const server = createServer(app);
 const io = new Server(server, {
 	cors: {
 		origin: 'http://localhost:3000',
-		methods: ['GET', 'POST']
+		methods: ['GET', 'POST', 'OPTIONS']
 	}
 });
 
@@ -42,20 +42,23 @@ io.on('connection', socket => {
 		// Make sure the user is "authenticated", and is the creator of the game.
 		const { gameId, rounds } = input;
 
+		socket.to(gameId).emit('game-started');
+
 		setTimeout(() => {
 			let i = 1;
 			const interval = setInterval(async () => {
 				const question = await getQuestion({ gameId, round: i });
 				socket.to(gameId).emit('question', question);
 
-				if (i === rounds) clearInterval(interval);
+				if (i === rounds) {
+					setTimeout(async () => {
+						const { leaderboard } = await finalizeGame(gameId);
+						socket.to(gameId).emit('leaderboard', leaderboard);
+					}, 17500);
+					clearInterval(interval);
+				}
 				i++;
 			}, 15000);
-
-			setTimeout(async () => {
-				const { leaderboard } = await finalizeGame(gameId);
-				socket.to(gameId).emit('leaderboard', leaderboard);
-			}, 17500);
 		}, 10000);
 	});
 

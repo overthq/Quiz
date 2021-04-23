@@ -74,7 +74,6 @@ interface GetQuestionOptions {
 export const getQuestion = async ({ gameId, round }: GetQuestionOptions) => {
 	try {
 		const question = await hgetAsync(gameId, `${round}`);
-		console.log(question);
 		const parsedQuestion = JSON.parse(question);
 
 		return {

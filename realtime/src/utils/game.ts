@@ -88,17 +88,15 @@ export const answerQuestion = async (payload: AnswerQuestionPayload) => {
 	}
 };
 
-interface FinalizeGamePayload {
-	gameId: string;
-}
-
-export const finalizeGame = async ({ gameId }: FinalizeGamePayload) => {
+export const finalizeGame = async (gameId: string) => {
 	const [game, leaderboard] = await Promise.all([
 		Game.findById(gameId),
 		Player.find({ gameId }).sort({
 			score: 'descending'
 		})
 	]);
+
+	console.log(game);
 
 	const [winner] = leaderboard;
 	const quizContract = new Contract(game.contract, QuizArtifact.abi);
