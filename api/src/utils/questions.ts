@@ -1,7 +1,7 @@
 import { promisify } from 'util';
 import client from '../config/redis';
 
-const getAsync = promisify(client.get).bind(client);
+const hgetAsync = promisify(client.hget).bind(client);
 
 // Fisher-Yates (Knuth) Shuffle.
 // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
@@ -29,12 +29,6 @@ interface CacheQuestionsOptions {
 	rounds?: number;
 }
 
-interface OTDQuestion {
-	question: string;
-	correct_answer: string;
-	incorrect_answers: string[];
-}
-
 export const cacheQuestions = async ({
 	gameId,
 	category,
@@ -54,19 +48,20 @@ export const cacheQuestions = async ({
 	});
 
 	const data = await response.json();
+	const cacheInput = [];
 
-	const questionsCachedForm = data.results.map(
-		(question: OTDQuestion, index: number) => [
-			`${gameId}-${index}`,
+	for (let i = 0; i < (rounds || 10); i++) {
+		cacheInput.push((i + 1).toString());
+		cacheInput.push(
 			JSON.stringify({
-				question: question.question,
-				correct: question.correct_answer,
-				incorrect: question.incorrect_answers
+				question: data.results[i].question,
+				correct: data.results[i].correct_answer,
+				incorrect: data.results[i].incorrect_answers
 			})
-		]
-	);
+		);
+	}
 
-	client.mset(...questionsCachedForm, error => {
+	client.hset(gameId, ...cacheInput, (error: Error) => {
 		if (error) console.log('Error when caching questions for quiz: ', gameId);
 	});
 };
@@ -78,11 +73,11 @@ interface GetQuestionOptions {
 
 export const getQuestion = async ({ gameId, round }: GetQuestionOptions) => {
 	try {
-		const question = await getAsync(`${gameId}-${round}`);
+		const question = await hgetAsync(gameId, `${round}`);
 		const parsedQuestion = JSON.parse(question);
 
 		return {
-			question: parsedQuestion,
+			question: parsedQuestion.question,
 			options: shuffle([parsedQuestion.correct, ...parsedQuestion.incorrect])
 		};
 	} catch (error) {
@@ -92,7 +87,7 @@ export const getQuestion = async ({ gameId, round }: GetQuestionOptions) => {
 
 export const checkAnswerCorrect = async ({ gameId, round, option }) => {
 	try {
-		const question = await getAsync(`${gameId}-${round}`);
+		const question = await hgetAsync(gameId, `${round}`);
 		const parsedQuestion = JSON.parse(question);
 
 		return {
