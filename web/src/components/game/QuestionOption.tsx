@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 
 interface QuestionOptionProps {
 	text: string;
@@ -6,20 +7,38 @@ interface QuestionOptionProps {
 	disabled: boolean;
 }
 
-const QuestionOption: React.FC<QuestionOptionProps> = ({ text, onSelect }) => {
-	const [selected, setSelected] = React.useState(false);
+const QuestionOptionWrapper = styled.button`
+	width: 300px;
+	height: 40px;
+	border-radius: 50%;
+	border: 2px solid #505050;
 
-	const handlePress = () => {
-		onSelect(text);
-		setSelected(true);
-	};
+	font-size: 16px;
+	font-weight: 500;
+	text-align: center;
+	background-color: #ffffff;
+
+	&:hover {
+		background-color: #d6d6d6;
+	}
+
+	&:not(:last-child) {
+		margin-bottom: 16px;
+	}
+`;
+
+const QuestionOption: React.FC<QuestionOptionProps> = ({
+	text,
+	onSelect,
+	disabled
+}) => {
+	const handlePress = () => onSelect(text);
 
 	return (
-		<button onClick={handlePress} disabled={selected}>
+		<QuestionOptionWrapper onClick={handlePress} disabled={disabled}>
 			{text}
-		</button>
+		</QuestionOptionWrapper>
 	);
 };
 
-// style={[styles.container, selected ? styles.selected : {}]}
 export default QuestionOption;

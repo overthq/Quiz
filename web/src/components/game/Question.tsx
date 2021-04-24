@@ -17,6 +17,7 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
 	const { state } = React.useContext(GameContext);
 
 	const handleSelect = async (option: string) => {
+		setAnswered(true);
 		socket.emit('answer-question', {
 			gameId: state.gameId,
 			playerId: state.playerId,
@@ -24,20 +25,21 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
 			option,
 			timeLeft: state.timeLeft
 		});
-		setAnswered(true);
 	};
 
 	return (
 		<div>
 			<h3>{question.question}</h3>
-			{question.options.map(option => (
-				<QuestionOption
-					key={option}
-					text={option}
-					onSelect={handleSelect}
-					disabled={answered}
-				/>
-			))}
+			<div style={{ display: 'flex', flexDirection: 'column' }}>
+				{question.options.map(option => (
+					<QuestionOption
+						key={option}
+						text={option}
+						onSelect={handleSelect}
+						disabled={answered}
+					/>
+				))}
+			</div>
 		</div>
 	);
 };
