@@ -18,6 +18,7 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
 
 	const handleSelect = async (option: string) => {
 		setAnswered(true);
+
 		socket.emit('answer-question', {
 			gameId: state.gameId,
 			playerId: state.playerId,

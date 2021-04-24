@@ -47,7 +47,7 @@ io.on('connection', socket => {
 			setTimeout(async () => {
 				console.log('getting question ', i);
 				const question = await getQuestion({ gameId, round: i });
-				io.in(gameId).emit('question', question);
+				io.in(gameId).emit('question', { question, round: i });
 			}, i * 15000);
 
 			// if (i === rounds) {

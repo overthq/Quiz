@@ -1,7 +1,11 @@
 import { ContractFactory, Contract, getDefaultProvider, Wallet } from 'ethers';
+import { promisify } from 'util';
 import { cacheQuestions, checkAnswerCorrect } from '../utils/questions';
 import { Game, Player } from '../models';
+import client from '../config/redis';
 import QuizArtifact from '../abis/Quiz.json';
+
+const delAsync = promisify(client.del).bind(client);
 
 const provider = getDefaultProvider('http://localhost:7545'); // 'ropsten'
 const signer = new Wallet(process.env.PRIVATE_KEY as string, provider);
@@ -96,12 +100,10 @@ export const finalizeGame = async (gameId: string) => {
 		})
 	]);
 
-	console.log(game);
-
 	const [winner] = leaderboard;
 	const quizContract = new Contract(game.contract, QuizArtifact.abi);
 
-	// await delAsync(gameId);
+	await delAsync(gameId);
 	await quizContract.payout(winner.address);
 
 	return { leaderboard };

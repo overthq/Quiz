@@ -64,9 +64,8 @@ export const GameProvider: React.FC = ({ children }) => {
 	);
 
 	React.useEffect(() => {
-		socket.on('question', question => {
-			console.log(question);
-			dispatch({ question, timeLeft: 10 });
+		socket.on('question', ({ question, round }) => {
+			dispatch({ question, round, timeLeft: 10, status: undefined });
 		});
 
 		socket.on('question-answered', payload => {
@@ -89,19 +88,19 @@ export const GameProvider: React.FC = ({ children }) => {
 	}, []);
 
 	React.useEffect(() => {
-		const interval = setInterval(() => {
-			if (state.timeLeft > 0) {
-				dispatch({ timeLeft: state.timeLeft - 1 });
-			} else {
-				dispatch({ status: { kind: 'time-up' } });
-				clearInterval(interval);
-			}
+		console.log(state.timeLeft);
+		if (state.timeLeft === 0) {
+			dispatch({ status: { kind: 'time-up' } });
+		}
+	}, [state.timeLeft]);
+
+	React.useEffect(() => {
+		const interval = setTimeout(() => {
+			dispatch({ timeLeft: state.timeLeft - 1 });
 		}, 1000);
 
-		return () => {
-			clearInterval(interval);
-		};
-	}, [state.question]);
+		return () => clearTimeout(interval);
+	});
 
 	return (
 		<GameContext.Provider value={{ state, dispatch }}>
