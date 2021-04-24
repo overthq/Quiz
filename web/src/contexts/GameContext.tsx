@@ -64,8 +64,9 @@ export const GameProvider: React.FC = ({ children }) => {
 	);
 
 	React.useEffect(() => {
-		socket.on('question', payload => {
-			dispatch({ ...payload, timeLeft: 10 });
+		socket.on('question', question => {
+			console.log(question);
+			dispatch({ question, timeLeft: 10 });
 		});
 
 		socket.on('question-answered', payload => {

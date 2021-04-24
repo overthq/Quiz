@@ -14,7 +14,11 @@ const QuestionOption: React.FC<QuestionOptionProps> = ({ text, onSelect }) => {
 		setSelected(true);
 	};
 
-	return <button onClick={handlePress}>{text}</button>;
+	return (
+		<button onClick={handlePress} disabled={selected}>
+			{text}
+		</button>
+	);
 };
 
 // style={[styles.container, selected ? styles.selected : {}]}

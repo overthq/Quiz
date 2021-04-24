@@ -28,38 +28,33 @@ io.on('connection', socket => {
 	socket.on('setup-game', async input => {
 		const data = await setupGame(input);
 		await socket.join([data.playerId, data.gameId]);
-		socket.emit('game-created', data);
+		io.in(data.gameId).emit('game-created', data);
 	});
 
 	socket.on('join-game', async input => {
 		const player = new Player(input);
-		await player.save();
-		await socket.join([player.id, input.gameId]);
-		socket.to(input.gameId).emit('game-joined', { player });
+		await Promise.all([player.save(), socket.join([player.id, input.gameId])]);
+		io.in(input.gameId).emit('game-joined', { player });
 	});
 
 	socket.on('start-game', async input => {
 		// Make sure the user is "authenticated", and is the creator of the game.
 		const { gameId, rounds } = input;
 
-		socket.to(gameId).emit('game-started');
+		io.in(gameId).emit('game-started');
 
-		setTimeout(() => {
-			let i = 1;
-			const interval = setInterval(async () => {
+		for (let i = 1; i <= rounds; i++) {
+			setTimeout(async () => {
+				console.log('getting question ', i);
 				const question = await getQuestion({ gameId, round: i });
-				socket.to(gameId).emit('question', question);
+				io.in(gameId).emit('question', question);
+			}, i * 15000);
 
-				if (i === rounds) {
-					setTimeout(async () => {
-						const { leaderboard } = await finalizeGame(gameId);
-						socket.to(gameId).emit('leaderboard', leaderboard);
-					}, 17500);
-					clearInterval(interval);
-				}
-				i++;
-			}, 15000);
-		}, 10000);
+			// if (i === rounds) {
+			// 	const { leaderboard } = await finalizeGame(gameId);
+			// 	io.in(gameId).emit('leaderboard', leaderboard);
+			// }
+		}
 	});
 
 	socket.on('answer-question', async input => {

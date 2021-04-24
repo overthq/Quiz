@@ -77,7 +77,7 @@ export const getQuestion = async ({ gameId, round }: GetQuestionOptions) => {
 		const parsedQuestion = JSON.parse(question);
 
 		return {
-			question: parsedQuestion,
+			question: parsedQuestion.question,
 			options: shuffle([parsedQuestion.correct, ...parsedQuestion.incorrect])
 		};
 	} catch (error) {

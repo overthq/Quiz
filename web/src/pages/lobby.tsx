@@ -31,7 +31,7 @@ const Lobby = () => {
 
 	React.useEffect(() => {
 		fetchPlayers();
-	}, []);
+	}, [fetchPlayers]);
 
 	const handleJoinGame: React.MouseEventHandler<HTMLButtonElement> = async e => {
 		e.preventDefault();
@@ -63,34 +63,24 @@ const Lobby = () => {
 						address: (window as any).ethereum.selectedAddress,
 						gameId
 					});
-					// Maybe wait a couple of seconds?
-					fetchPlayers();
 				}
 			}
 		);
 	};
 
-	const initGame = React.useCallback(() => {
+	const startGame: React.MouseEventHandler<HTMLButtonElement> = async e => {
+		e.preventDefault();
+		socket.emit('start-game', { gameId, rounds: 10 });
+	};
+
+	// Most likely very prone to race conditions. This entire "lobby" is hanging by a thread
+	React.useEffect(() => {
 		const playerId = players.find(
 			p => p.address === (window as any).ethereum.selectedAddress
 		);
 
-		if (playerId) {
-			dispatch({ gameId, playerId } as any);
-			history.push('/game');
-		} else {
-			throw new Error('Impostor found');
-		}
-	}, [dispatch, gameId, players, history]);
-
-	const startGame: React.MouseEventHandler<HTMLButtonElement> = async e => {
-		e.preventDefault();
-		socket.emit('start-game', {
-			gameId,
-			rounds: 10
-		});
-		// initGame();
-	};
+		if (playerId) dispatch({ gameId, playerId } as any);
+	}, [dispatch, gameId, players]);
 
 	React.useEffect(() => {
 		socket.on('game-joined', ({ player }) => {
@@ -98,9 +88,9 @@ const Lobby = () => {
 		});
 
 		socket.on('game-started', () => {
-			initGame();
+			history.push('/game');
 		});
-	}, [history, initGame, players]);
+	}, [history, players]);
 
 	return (
 		<div>
