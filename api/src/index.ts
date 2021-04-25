@@ -43,17 +43,17 @@ io.on('connection', socket => {
 
 		io.in(gameId).emit('game-started');
 
-		for (let i = 1; i <= rounds; i++) {
+		for (let i = 1; i <= rounds + 1; i++) {
 			setTimeout(async () => {
-				console.log('getting question ', i);
-				const question = await getQuestion({ gameId, round: i });
-				io.in(gameId).emit('question', { question, round: i });
+				if (i <= rounds) {
+					console.log('getting question ', i);
+					const question = await getQuestion({ gameId, round: i });
+					io.in(gameId).emit('question', { question, round: i });
+				} else {
+					const { leaderboard } = await finalizeGame(gameId);
+					io.in(gameId).emit('leaderboard', leaderboard);
+				}
 			}, i * 15000);
-
-			// if (i === rounds) {
-			// 	const { leaderboard } = await finalizeGame(gameId);
-			// 	io.in(gameId).emit('leaderboard', leaderboard);
-			// }
 		}
 	});
 

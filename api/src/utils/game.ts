@@ -76,14 +76,14 @@ export const answerQuestion = async (payload: AnswerQuestionPayload) => {
 		option
 	});
 
-	const score = isCorrect ? 10 * timeLeft : 0;
+	const inc = isCorrect ? 10 * timeLeft : 0;
 
 	try {
-		const { score: s } = await Player.findByIdAndUpdate(playerId, {
-			$inc: { score }
+		const { score } = await Player.findByIdAndUpdate(playerId, {
+			$inc: { score: inc }
 		});
 		return {
-			score: s,
+			score,
 			isCorrect,
 			correctAnswer
 		};
@@ -101,10 +101,8 @@ export const finalizeGame = async (gameId: string) => {
 	]);
 
 	const [winner] = leaderboard;
-	const quizContract = new Contract(game.contract, QuizArtifact.abi);
+	const quizContract = new Contract(game.contract, QuizArtifact.abi, signer);
 
-	await delAsync(gameId);
-	await quizContract.payout(winner.address);
-
+	await Promise.all([delAsync(gameId), quizContract.payout(winner.address)]);
 	return { leaderboard };
 };
