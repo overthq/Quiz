@@ -10,7 +10,7 @@ interface QuestionOptionProps {
 const QuestionOptionWrapper = styled.button`
 	width: 300px;
 	height: 40px;
-	border-radius: 50%;
+	border-radius: 20px;
 	border: 2px solid #505050;
 
 	font-size: 16px;

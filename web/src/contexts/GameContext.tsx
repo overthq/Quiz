@@ -59,7 +59,7 @@ export const GameProvider: React.FC = ({ children }) => {
 			status: undefined,
 			question: undefined,
 			round: undefined,
-			timeLeft: 10
+			timeLeft: undefined
 		}
 	);
 
@@ -70,14 +70,19 @@ export const GameProvider: React.FC = ({ children }) => {
 
 		socket.on('question-answered', payload => {
 			if (payload.isCorrect) {
-				dispatch({ score: payload.score, status: { kind: 'correct' } });
+				dispatch({
+					score: payload.score,
+					status: { kind: 'correct' },
+					timeLeft: undefined
+				});
 			} else {
 				dispatch({
 					score: payload.score,
 					status: {
 						kind: 'wrong',
 						correctAnswer: payload.correctAnswer
-					}
+					},
+					timeLeft: undefined
 				});
 			}
 		});
@@ -88,18 +93,19 @@ export const GameProvider: React.FC = ({ children }) => {
 	}, []);
 
 	React.useEffect(() => {
-		console.log(state.timeLeft);
-		if (state.timeLeft === 0) {
-			dispatch({ status: { kind: 'time-up' } });
+		if (state.timeLeft === 0 && !state.status) {
+			dispatch({ status: { kind: 'time-up' }, timeLeft: undefined });
 		}
-	}, [state.timeLeft]);
+	}, [state.timeLeft, state.status]);
 
 	React.useEffect(() => {
-		const interval = setTimeout(() => {
-			dispatch({ timeLeft: state.timeLeft - 1 });
-		}, 1000);
+		if (state.timeLeft) {
+			const timeout = setTimeout(() => {
+				dispatch({ timeLeft: state.timeLeft - 1 });
+			}, 1000);
 
-		return () => clearTimeout(interval);
+			return () => clearTimeout(timeout);
+		}
 	});
 
 	return (
