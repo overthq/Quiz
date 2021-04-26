@@ -6,7 +6,6 @@ import client from '../config/redis';
 import QuizArtifact from '../abis/Quiz.json';
 
 const delAsync = promisify(client.del).bind(client);
-
 const provider = getDefaultProvider('http://localhost:7545'); // 'ropsten'
 const signer = new Wallet(process.env.PRIVATE_KEY as string, provider);
 
@@ -79,14 +78,15 @@ export const answerQuestion = async (payload: AnswerQuestionPayload) => {
 	const inc = isCorrect ? 10 * timeLeft : 0;
 
 	try {
-		const { score } = await Player.findByIdAndUpdate(playerId, {
-			$inc: { score: inc }
-		});
-		return {
-			score,
-			isCorrect,
-			correctAnswer
-		};
+		const { score } = await Player.findByIdAndUpdate(
+			playerId,
+			{
+				$inc: { score: inc }
+			},
+			{ new: true }
+		);
+
+		return { score, isCorrect, correctAnswer };
 	} catch (error) {
 		console.error(error.message);
 	}

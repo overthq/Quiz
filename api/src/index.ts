@@ -22,8 +22,6 @@ app.use(express.json());
 app.use(cors());
 app.use(routes);
 
-// Learnt a lot from: https://github.com/ericterpstra/anagrammatix/blob/900f8ce5e1e0851e0fee89fa514642cfd71d147b/agxgame.js
-
 io.on('connection', socket => {
 	socket.on('setup-game', async input => {
 		const data = await setupGame(input);
@@ -46,7 +44,6 @@ io.on('connection', socket => {
 		for (let i = 1; i <= rounds + 1; i++) {
 			setTimeout(async () => {
 				if (i <= rounds) {
-					console.log('getting question ', i);
 					const question = await getQuestion({ gameId, round: i });
 					io.in(gameId).emit('question', { question, round: i });
 				} else {
