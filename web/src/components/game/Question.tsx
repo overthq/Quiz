@@ -1,7 +1,32 @@
 import React from 'react';
+import styled from 'styled-components';
 import QuestionOption from './QuestionOption';
 import { socket } from '../../utils/socket';
 import { GameContext } from '../../contexts/GameContext';
+
+const QuestionContainer = styled.div`
+	max-width: 600px;
+	max-height: 800px;
+	height: 100%;
+	width: 100%;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 16px;
+
+	h3 {
+		font-size: 26px;
+		font-weight: 500;
+		text-align: center;
+		margin-bottom: 16px;
+	}
+
+	div {
+		display: flex;
+		flex-direction: column;
+	}
+`;
 
 interface QuestionType {
 	question: string;
@@ -29,9 +54,9 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
 	};
 
 	return (
-		<div>
+		<QuestionContainer>
 			<h3>{question.question}</h3>
-			<div style={{ display: 'flex', flexDirection: 'column' }}>
+			<div>
 				{question.options.map(option => (
 					<QuestionOption
 						key={option}
@@ -41,7 +66,7 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
 					/>
 				))}
 			</div>
-		</div>
+		</QuestionContainer>
 	);
 };
 

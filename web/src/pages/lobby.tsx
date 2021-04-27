@@ -77,7 +77,7 @@ const Lobby = () => {
 	React.useEffect(() => {
 		const playerId = players.find(
 			p => p.address === (window as any).ethereum.selectedAddress
-		);
+		)?._id;
 
 		if (playerId) dispatch({ gameId, playerId } as any);
 	}, [dispatch, gameId, players]);

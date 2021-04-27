@@ -1,5 +1,5 @@
-import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import styled from 'styled-components';
 
 import Game from './pages/game';
 import CreateGame from './pages/create-game';
@@ -7,9 +7,17 @@ import Lobby from './pages/lobby';
 import Home from './pages/home';
 import { GameProvider } from './contexts/GameContext';
 
-const App = () => {
-	return (
-		<GameProvider>
+const AppWrapper = styled.div`
+	height: 100vh;
+	width: 100vw;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+`;
+
+const App = () => (
+	<GameProvider>
+		<AppWrapper>
 			<BrowserRouter>
 				<Switch>
 					<Route exact path='/'>
@@ -26,8 +34,8 @@ const App = () => {
 					</Route>
 				</Switch>
 			</BrowserRouter>
-		</GameProvider>
-	);
-};
+		</AppWrapper>
+	</GameProvider>
+);
 
 export default App;
