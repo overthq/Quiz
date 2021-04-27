@@ -2,7 +2,6 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
-import 'cross-fetch/polyfill';
 import { Player } from './models';
 import routes from './routes';
 import { setupGame, answerQuestion, finalizeGame } from './utils/game';
@@ -36,9 +35,9 @@ io.on('connection', socket => {
 	});
 
 	socket.on('start-game', async input => {
-		// Make sure the user is "authenticated", and is the creator of the game.
-		const { gameId, rounds } = input;
+		// TODO: Make sure the user is "authenticated", and is the creator of the game.
 
+		const { gameId, rounds } = input;
 		io.in(gameId).emit('game-started');
 
 		for (let i = 1; i <= rounds + 1; i++) {
@@ -56,7 +55,7 @@ io.on('connection', socket => {
 
 	socket.on('answer-question', async input => {
 		const data = await answerQuestion(input);
-		socket.emit('question-answered', data);
+		io.in(input.playerId).emit('question-answered', data);
 	});
 });
 

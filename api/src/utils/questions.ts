@@ -1,3 +1,4 @@
+import fetch from 'node-fetch';
 import { promisify } from 'util';
 import client from '../config/redis';
 
