@@ -18,7 +18,7 @@ contract Quiz {
 	}
 
 	function payout(address payable winner) public {
-		require(msg.sender == deployer, 'Only the deployer can trigger the payout');
+		require(payable(msg.sender) == deployer, 'Only the deployer can trigger the payout');
 
 		uint256 currentBalance = (address(this)).balance;
 		uint256 fees = currentBalance / 20;

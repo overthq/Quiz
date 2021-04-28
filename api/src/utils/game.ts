@@ -37,7 +37,7 @@ export const setupGame = async (payload: SetupGamePayload) => {
 				difficulty,
 				rounds: Number(rounds)
 			}),
-			Quiz.deploy(Number(stake))
+			Quiz.deploy(stake)
 		]);
 
 		await quiz.deployed();

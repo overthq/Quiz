@@ -18,6 +18,7 @@ const Game: React.FC = () => {
 		<div>
 			<Progress />
 			<Score />
+			<p>Round: {state.round}</p>
 			<Question question={state.question} />
 		</div>
 	);
