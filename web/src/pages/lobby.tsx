@@ -1,8 +1,27 @@
 import React from 'react';
+import styled from 'styled-components';
 import { getGameDetails, getPlayers } from '../utils/game';
 import { socket } from '../utils/socket';
 import { GameContext, Player } from '../contexts/GameContext';
 import { useHistory, useParams } from 'react-router';
+
+const JoinForm = styled.div`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	input {
+		height: 40px;
+		max-width: 300px;
+		width: 100%;
+	}
+
+	button {
+		height: 40px;
+		max-width: 300px;
+		width: 100%;
+	}
+`;
 
 const Lobby = () => {
 	const history = useHistory();
@@ -94,34 +113,32 @@ const Lobby = () => {
 
 	return (
 		<div>
-			<div>
-				{joined ? (
-					<>
-						<div>
-							<h1>Lobby</h1>
-							{players.map(player => (
-								<div key={player._id}>
-									<p>{player.nickname}</p>
-								</div>
-							))}
-						</div>
-						{isHost ? (
-							<button onClick={startGame}>Start game</button>
-						) : (
-							<p>Waiting for game to start...</p>
-						)}
-					</>
-				) : (
+			{joined ? (
+				<>
 					<div>
-						<input
-							name='nickname'
-							placeholder='Your nickname'
-							onChange={e => setNickname(e.target.value)}
-						/>
-						<button onClick={handleJoinGame}>Join game</button>
+						<h1>Lobby</h1>
+						{players.map(player => (
+							<div key={player._id}>
+								<p>{player.nickname}</p>
+							</div>
+						))}
 					</div>
-				)}
-			</div>
+					{isHost ? (
+						<button onClick={startGame}>Start game</button>
+					) : (
+						<p>Waiting for game to start...</p>
+					)}
+				</>
+			) : (
+				<JoinForm>
+					<input
+						name='nickname'
+						placeholder='Your nickname'
+						onChange={e => setNickname(e.target.value)}
+					/>
+					<button onClick={handleJoinGame}>Join game</button>
+				</JoinForm>
+			)}
 		</div>
 	);
 };
