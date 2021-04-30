@@ -10,8 +10,7 @@ const GameSchema = new Schema(
 	{
 		host: {
 			type: String,
-			required: true,
-			unique: true
+			required: true
 		},
 		contract: {
 			type: String,
