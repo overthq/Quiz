@@ -12,10 +12,12 @@ const VerticalForm = styled(Form)`
 
 	input,
 	select {
-		margin: 4px 0;
+		margin: 8px 0;
 		height: 40px;
-		padding-left: 4px;
+		padding: 0 8px;
 		font-size: 16px;
+		border-radius: 6px;
+		border: 1px solid #000000;
 	}
 
 	button {
@@ -23,6 +25,11 @@ const VerticalForm = styled(Form)`
 		background-color: #000000;
 		color: #ffffff;
 		border-radius: 6px;
+		cursor: pointer;
+		border: none;
+		font-size: 16px;
+		font-weight: bold;
+		margin-top: 4px;
 	}
 `;
 
