@@ -2,7 +2,7 @@
 	"name": "quiz",
 	"description": "Crypto-based trivia game",
 	"version": "0.0.1",
-	"license": "GNU-GPLv3",
+	"license": "GPL-3.0-or-later",
 	"husky": {
 		"hooks": {
 			"pre-commit": "lint-staged"
