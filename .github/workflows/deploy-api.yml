@@ -18,7 +18,7 @@ jobs:
           node-version: 14.x
 
       - name: Install dependencies
-        run: cd server && yarn
+        run: cd api && yarn
 
       - name: Push to Heroku
         run: git subtree push --prefix api https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
