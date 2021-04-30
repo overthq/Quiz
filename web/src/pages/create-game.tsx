@@ -50,6 +50,8 @@ const CreateGame = () => {
 
 	React.useEffect(() => {
 		// Get gas price: https://gist.github.com/thrilok209/8b19dbd8d46b2805ab8bb8973611aea2
+		// Find out how to wait for transaction to be confirmed on the blockchain, before carrying out another action.
+
 		socket.on('game-created', data => {
 			(window as any).ethereum.sendAsync(
 				{
@@ -106,6 +108,7 @@ const CreateGame = () => {
 				>
 					{({ setFieldValue }) => (
 						<VerticalForm>
+							<h1>Create Game</h1>
 							<label htmlFor='nickname'>Nickname</label>
 							<Field name='nickname' placeholder='Your nickname' />
 

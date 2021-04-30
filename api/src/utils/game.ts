@@ -6,7 +6,9 @@ import client from '../config/redis';
 import QuizArtifact from '../abis/Quiz.json';
 
 const delAsync = promisify(client.del).bind(client);
-const provider = getDefaultProvider('http://localhost:7545'); // 'ropsten'
+const provider = getDefaultProvider(
+	process.env.NODE_ENV === 'production' ? 'ropsten' : 'http://localhost:7545'
+);
 const signer = new Wallet(process.env.PRIVATE_KEY as string, provider);
 
 interface SetupGamePayload {
