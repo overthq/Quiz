@@ -16,8 +16,7 @@ const PlayerSchema = new Schema(
 		},
 		address: {
 			type: String,
-			required: true,
-			unique: true
+			required: true
 		},
 		nickname: {
 			type: String,
@@ -30,5 +29,7 @@ const PlayerSchema = new Schema(
 	},
 	{ timestamps: true }
 );
+
+PlayerSchema.index({ gameId: 1, address: 1 }, { unique: true });
 
 export const Player = model<PlayerType>('Player', PlayerSchema);

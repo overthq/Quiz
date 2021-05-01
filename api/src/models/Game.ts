@@ -24,4 +24,6 @@ const GameSchema = new Schema(
 	{ timestamps: true }
 );
 
+GameSchema.index({ host: 1, contract: 1 }, { unique: true });
+
 export const Game = model<GameType>('Game', GameSchema);
