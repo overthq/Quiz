@@ -3,6 +3,8 @@ import { promisify } from 'util';
 import client from '../config/redis';
 
 const hgetAsync = promisify(client.hget).bind(client);
+const getAsync = promisify(client.get).bind(client);
+const setAsync = promisify(client.set).bind(client);
 
 // Fisher-Yates (Knuth) Shuffle.
 // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
@@ -36,7 +38,10 @@ export const cacheQuestions = async ({
 	difficulty,
 	rounds
 }: CacheQuestionsOptions) => {
-	let apiUrl = `https://opentdb.com/api.php?type=multiple`;
+	const token = await getSessionToken();
+	console.log('token is: ', token);
+
+	let apiUrl = `https://opentdb.com/api.php?token=${token}type=multiple`;
 	apiUrl += `&amount=${rounds || 10}`;
 	if (category) apiUrl += `&category=${category}`;
 	if (difficulty) apiUrl += `&difficulty=${difficulty}`;
@@ -49,6 +54,14 @@ export const cacheQuestions = async ({
 	});
 
 	const data = await response.json();
+
+	// Hopefully, this works.
+	// If the token has expired, reset the token, and then re-run this function.
+	if (data.response_code === 4) {
+		await createSessionToken();
+		cacheQuestions({ gameId, category, difficulty, rounds });
+	}
+
 	const cacheInput = [];
 
 	for (let i = 0; i < (rounds || 10); i++) {
@@ -95,6 +108,35 @@ export const checkAnswerCorrect = async ({ gameId, round, option }) => {
 			isCorrect: parsedQuestion.correct === option,
 			correctAnswer: parsedQuestion.correct
 		};
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+const createSessionToken = async () => {
+	try {
+		const response = await fetch(
+			'https://opentdb.com/api_token.php?command=request',
+			{
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json'
+				}
+			}
+		);
+		const { token } = await response.json();
+		await setAsync('OPENTDB_TOKEN', token);
+		return token;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+const getSessionToken = async () => {
+	try {
+		let token = await getAsync('OPENTDB_TOKEN');
+		if (!token) token = await createSessionToken();
+		return token;
 	} catch (error) {
 		console.log(error);
 	}

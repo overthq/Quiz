@@ -128,6 +128,9 @@ const Lobby = () => {
 					) : (
 						<p>Waiting for game to start...</p>
 					)}
+					<p>
+						(Send this page's URL to your friends to invite them to the game)
+					</p>
 				</>
 			) : (
 				<JoinForm>

@@ -17,10 +17,6 @@ const HomeContainer = styled.div`
 		font-family: monospace;
 		font-size: 22px;
 		color: black;
-
-		&:not(:last-child) {
-			margin-right: 16px;
-		}
 	}
 `;
 
@@ -29,7 +25,6 @@ const Home = () => (
 		<h1>Welcome to Quiz!</h1>
 		<div>
 			<Link to='/create-game'>Create game</Link>
-			<Link to='/join-game'>Join game</Link>
 		</div>
 	</HomeContainer>
 );
