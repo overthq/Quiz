@@ -59,12 +59,9 @@ const CreateGame = () => {
 					params: [
 						{
 							nonce: '0x00',
-							gasPrice: parseInt('20000000000').toString(16),
-							gas: parseInt('6721975').toString(16),
 							to: data.contract,
 							from: (window as any).ethereum.selectedAddress,
-							value: parseInt(data.stake).toString(16),
-							chainId: 3
+							value: parseInt(data.stake).toString(16)
 						}
 					]
 				},

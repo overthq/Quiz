@@ -55,12 +55,12 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
 
 	return (
 		<QuestionContainer>
-			<h3>{question.question}</h3>
+			<h3>{unescape(question.question)}</h3>
 			<div>
 				{question.options.map(option => (
 					<QuestionOption
 						key={option}
-						text={option}
+						text={unescape(option)}
 						onSelect={handleSelect}
 						disabled={answered}
 					/>
