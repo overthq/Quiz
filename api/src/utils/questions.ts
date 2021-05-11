@@ -39,9 +39,8 @@ export const cacheQuestions = async ({
 	rounds
 }: CacheQuestionsOptions) => {
 	const token = await getSessionToken();
-	console.log('token is: ', token);
 
-	let apiUrl = `https://opentdb.com/api.php?token=${token}type=multiple`;
+	let apiUrl = `https://opentdb.com/api.php?token=${token}&type=multiple`;
 	apiUrl += `&amount=${rounds || 10}`;
 	if (category) apiUrl += `&category=${category}`;
 	if (difficulty) apiUrl += `&difficulty=${difficulty}`;
