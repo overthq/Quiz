@@ -28,14 +28,7 @@ const Leaderboard: React.FC = () => {
 		<LeaderboardContainer>
 			<h2>Leaderboard</h2>
 			{state.leaderboard?.map(player => (
-				<div
-					key={player._id}
-					style={{
-						width: '100%',
-						display: 'flex',
-						justifyContent: 'space-between'
-					}}
-				>
+				<div key={player._id}>
 					<p>{player.nickname}</p>
 					<p>{player.score}</p>
 				</div>
