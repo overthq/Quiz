@@ -10,11 +10,14 @@ contract Quiz {
 		stake = _stake;
 	}
 
+	event Contribution(address sender);
+
 	receive () external payable {
 		require(
 			msg.value == stake,
 			'All players have to contribute the same amount'
 		);
+		emit Contribution(msg.sender);
 	}
 
 	function payout(address payable winner) public {

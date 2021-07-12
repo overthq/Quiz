@@ -1,11 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { useWalletConnect } from '@walletconnect/react-native-dapp';
 import Button from '../components/Button';
+import { connect } from '../utils/client';
 
 const Connect: React.FC = () => {
-	const { connect } = useWalletConnect();
-
 	return (
 		<View style={styles.container}>
 			<Text style={styles.heading}>Welcome to Quiz!</Text>
