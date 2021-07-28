@@ -2,7 +2,7 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
-import { Player } from './models';
+import { Game, Player } from './models';
 import routes from './routes';
 import { setupGame, answerQuestion, finalizeGame } from './utils/game';
 import { getQuestion } from './utils/questions';
@@ -35,9 +35,14 @@ io.on('connection', socket => {
 	});
 
 	socket.on('start-game', async input => {
-		// TODO: Make sure the user is "authenticated", and is the creator of the game.
-
-		const { gameId, rounds } = input;
+		const { gameId, rounds, address } = input;
+		const game = await Game.findById(gameId);
+		if (game.host !== address) {
+			io.in(gameId).emit('permission-error', {
+				message: 'Non-host attempted to create a new game'
+			});
+			return;
+		}
 		io.in(gameId).emit('game-started');
 
 		for (let i = 1; i <= rounds + 1; i++) {

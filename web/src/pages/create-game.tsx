@@ -49,8 +49,8 @@ const CreateGame = () => {
 	}, []);
 
 	React.useEffect(() => {
-		// Get gas price: https://gist.github.com/thrilok209/8b19dbd8d46b2805ab8bb8973611aea2
-		// Find out how to wait for transaction to be confirmed on the blockchain, before carrying out another action.
+		// Use contract logs to check for a "Deposit" event,
+		// where address -> ethereum.selectedAddress.
 
 		socket.on('game-created', data => {
 			(window as any).ethereum.sendAsync(
@@ -91,7 +91,9 @@ const CreateGame = () => {
 					onSubmit={async values => {
 						const { nickname, stake, category, rounds, difficulty } = values;
 						const stakeInWei = toWei(stake, 'ether');
-						const [account] = await (window as any).ethereum.enable();
+						const [account] = await (window as any).ethereum.request({
+							method: 'eth_requestAccounts'
+						});
 
 						socket.emit('setup-game', {
 							address: account,

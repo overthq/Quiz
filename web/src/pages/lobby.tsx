@@ -30,16 +30,13 @@ const Lobby = () => {
 	const { gameId } = useParams<{ gameId: string }>();
 	const { dispatch } = React.useContext(GameContext);
 
-	const isHost = React.useMemo(
-		() => players[0]?.address === (window as any).ethereum.selectedAddress,
-		[players]
-	);
-
-	const joined = React.useMemo(
-		() =>
-			players
+	const { isHost, joined } = React.useMemo(
+		() => ({
+			isHost: players[0]?.address === (window as any).ethereum.selectedAddress,
+			joined: players
 				.map(p => p.address)
-				.includes((window as any).ethereum.selectedAddress),
+				.includes((window as any).ethereum.selectedAddress)
+		}),
 		[players]
 	);
 
@@ -89,7 +86,11 @@ const Lobby = () => {
 
 	const startGame: React.MouseEventHandler<HTMLButtonElement> = async e => {
 		e.preventDefault();
-		socket.emit('start-game', { gameId, rounds: 10 });
+		socket.emit('start-game', {
+			gameId,
+			rounds: 10,
+			address: (window as any).ethereum.selectedAddress
+		});
 	};
 
 	// Most likely very prone to race conditions. This entire "lobby" is hanging by a thread
@@ -98,7 +99,7 @@ const Lobby = () => {
 			p => p.address === (window as any).ethereum.selectedAddress
 		)?._id;
 
-		if (playerId) dispatch({ gameId, playerId } as any);
+		if (playerId) dispatch({ gameId, playerId });
 	}, [dispatch, gameId, players]);
 
 	React.useEffect(() => {

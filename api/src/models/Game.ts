@@ -1,7 +1,7 @@
 import { model, Schema, Document } from 'mongoose';
 
 interface GameType extends Document {
-	address: string;
+	host: string;
 	contract: string;
 	stake: string;
 }

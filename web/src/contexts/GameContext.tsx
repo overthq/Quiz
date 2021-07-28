@@ -9,18 +9,8 @@ export interface Player {
 }
 
 type RoundStatus =
-	| {
-			kind: 'correct';
-			correctAnswer: never;
-	  }
-	| {
-			kind: 'wrong';
-			correctAnswer: string;
-	  }
-	| {
-			kind: 'time-up';
-			correctAnswer: never;
-	  };
+	| { kind: 'correct' | 'time-up' }
+	| { kind: 'wrong'; correctAnswer: string };
 
 interface Question {
 	question: string;
@@ -40,7 +30,7 @@ interface GameState {
 
 export const GameContext = React.createContext<{
 	state: GameState;
-	dispatch: (args: keyof Partial<GameState>) => void;
+	dispatch: (args: Partial<GameState>) => void;
 }>({
 	state: {},
 	dispatch: () => {
@@ -50,7 +40,7 @@ export const GameContext = React.createContext<{
 
 export const GameProvider: React.FC = ({ children }) => {
 	const [state, dispatch] = React.useReducer(
-		(p: any, n: any) => ({ ...p, ...n }),
+		(p: GameState, n: GameState) => ({ ...p, ...n }),
 		{
 			gameId: undefined,
 			playerId: undefined,
@@ -101,7 +91,7 @@ export const GameProvider: React.FC = ({ children }) => {
 	React.useEffect(() => {
 		if (state.timeLeft) {
 			const timeout = setTimeout(() => {
-				dispatch({ timeLeft: state.timeLeft - 1 });
+				dispatch({ timeLeft: state.timeLeft ? state.timeLeft - 1 : 0 });
 			}, 1000);
 
 			return () => clearTimeout(timeout);
