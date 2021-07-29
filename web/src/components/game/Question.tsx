@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { unescape } from 'html-escaper';
 import QuestionOption from './QuestionOption';
 import { socket } from '../../utils/socket';
 import { GameContext } from '../../contexts/GameContext';

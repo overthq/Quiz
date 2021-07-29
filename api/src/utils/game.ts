@@ -106,5 +106,10 @@ export const finalizeGame = async (gameId: string) => {
 	const quizContract = new Contract(game.contract, QuizArtifact.abi, signer);
 
 	await Promise.all([delAsync(gameId), quizContract.payout(winner.address)]);
+	await Promise.all([
+		Player.deleteMany({ gameId }),
+		Game.findByIdAndDelete(gameId)
+	]);
+
 	return { leaderboard };
 };
