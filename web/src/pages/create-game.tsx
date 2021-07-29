@@ -49,16 +49,12 @@ const CreateGame = () => {
 	}, []);
 
 	React.useEffect(() => {
-		// Use contract logs to check for a "Deposit" event,
-		// where address -> ethereum.selectedAddress.
-
 		socket.on('game-created', data => {
 			(window as any).ethereum.sendAsync(
 				{
 					method: 'eth_sendTransaction',
 					params: [
 						{
-							nonce: '0x00',
 							to: data.contract,
 							from: (window as any).ethereum.selectedAddress,
 							value: parseInt(data.stake).toString(16)

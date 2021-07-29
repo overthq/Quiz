@@ -60,9 +60,6 @@ const Lobby = () => {
 				method: 'eth_sendTransaction',
 				params: [
 					{
-						nonce: '0x00',
-						gasPrice: '30000',
-						gas: '21000',
 						to: contract,
 						from: (window as any).ethereum.selectedAddress,
 						value: parseInt(stake).toString(16),
@@ -93,7 +90,6 @@ const Lobby = () => {
 		});
 	};
 
-	// Most likely very prone to race conditions. This entire "lobby" is hanging by a thread
 	React.useEffect(() => {
 		const playerId = players.find(
 			p => p.address === (window as any).ethereum.selectedAddress
