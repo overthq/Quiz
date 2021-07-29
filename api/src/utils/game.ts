@@ -6,13 +6,19 @@ import client from '../config/redis';
 import QuizArtifact from '../abis/Quiz.json';
 
 const delAsync = promisify(client.del).bind(client);
-const provider = new providers.JsonRpcProvider(
+
+let provider:
+	| providers.JsonRpcProvider
+	| providers.EtherscanProvider = new providers.JsonRpcProvider(
 	process.env.NODE_ENV === 'production' ? 'ropsten' : 'http://localhost:8545'
 );
 
-// if (process.env.NODE_ENV === 'production') {
-
-// }
+if (process.env.NODE_ENV === 'production') {
+	provider = new providers.EtherscanProvider(
+		'ropsten',
+		process.env.ETHERSCAN_API_KEY as string
+	);
+}
 
 const signer = new Wallet(process.env.PRIVATE_KEY as string, provider);
 
