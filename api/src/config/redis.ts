@@ -1,14 +1,15 @@
 import redis from 'redis';
 
-const client = redis.createClient({
-	url: process.env.REDIS_URL,
+const prodOptions = {
+	url: process.env.REDIS_TLS_URL,
+	tls: { rejectUnauthorized: false }
+};
 
-	...(process.env.NODE_ENV === 'production'
-		? {
-				tls: { rejectUnauthorized: false }
-		  }
-		: {})
-});
+const devOptions = { url: process.env.REDIS_URL };
+
+const client = redis.createClient(
+	process.env.NODE_ENV === 'production' ? prodOptions : devOptions
+);
 
 client.on('connect', () => {
 	console.log('Connected to Redis!');
