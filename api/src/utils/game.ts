@@ -1,4 +1,4 @@
-import { ContractFactory, Contract, getDefaultProvider, Wallet } from 'ethers';
+import { ContractFactory, Contract, providers, Wallet } from 'ethers';
 import { promisify } from 'util';
 import { cacheQuestions, checkAnswerCorrect } from '../utils/questions';
 import { Game, Player } from '../models';
@@ -6,9 +6,14 @@ import client from '../config/redis';
 import QuizArtifact from '../abis/Quiz.json';
 
 const delAsync = promisify(client.del).bind(client);
-const provider = getDefaultProvider(
+const provider = new providers.JsonRpcProvider(
 	process.env.NODE_ENV === 'production' ? 'ropsten' : 'http://localhost:8545'
 );
+
+// if (process.env.NODE_ENV === 'production') {
+
+// }
+
 const signer = new Wallet(process.env.PRIVATE_KEY as string, provider);
 
 interface SetupGamePayload {
