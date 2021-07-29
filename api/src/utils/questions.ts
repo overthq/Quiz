@@ -53,12 +53,11 @@ export const cacheQuestions = async ({
 	});
 
 	const data = await response.json();
-	console.log(data);
 
 	// Hopefully, this works.
 	// If the token has expired, reset the token, and then re-run this function.
 	// This might also mean I should look into handling the other response codes except 0 (1 through 3)
-	if (data.response_code === 4) {
+	if ([3, 4].includes(data.response_code)) {
 		await createSessionToken();
 		return cacheQuestions({ gameId, category, difficulty, rounds });
 	}
