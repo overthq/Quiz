@@ -53,6 +53,7 @@ export const cacheQuestions = async ({
 	});
 
 	const data = await response.json();
+	console.log(data);
 
 	// Hopefully, this works.
 	// If the token has expired, reset the token, and then re-run this function.
