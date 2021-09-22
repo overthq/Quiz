@@ -5,19 +5,19 @@ contract Quiz {
 	address payable deployer;
 	uint256 stake;
 
+	event ContributionRecieved(address indexed player, uint256 stake);
+
 	constructor(uint256 _stake) {
 		deployer = payable(msg.sender);
 		stake = _stake;
 	}
-
-	event Contribution(address sender);
 
 	receive () external payable {
 		require(
 			msg.value == stake,
 			'All players have to contribute the same amount'
 		);
-		emit Contribution(msg.sender);
+		emit ContributionRecieved(msg.sender, stake);
 	}
 
 	function payout(address payable winner) public {
@@ -26,8 +26,12 @@ contract Quiz {
 		uint256 currentBalance = (address(this)).balance;
 		uint256 fees = currentBalance / 20;
 
-		deployer.transfer(fees);
-		winner.transfer(currentBalance - fees);
+		(bool dSent, bytes memory dData) = deployer.call{value: fees}("");
+		require(dSent, "Failed to send fees to deployer");
+
+		(bool wSent, bytes memory wData) = winner.call{value: currentBalance - fees}("");
+		require(wSent, "Failed to send ether to winner");
 	}
+
 }
 
